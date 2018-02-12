@@ -1,0 +1,104 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>ftpgw.tcl: A simple FTP tunnelling gateway</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:rurban@x-ray.at" />
+<style>
+<!--
+body, p, h1, h2, h3, h4, h5, td {
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+}
+h1, h2, h3, h4, h5 {
+    color: blue;
+}
+p, td {
+    font-size: 12pt;
+}
+pre {
+    font-family: Courier New, Courier, monospace;
+    font-size: 11pt;
+}
+code {
+    font-family: Courier New, Courier, monospace;
+    font-size: 12pt;
+}
+-->
+</style>
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+<!--
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#____">書式</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#copyright">COPYRIGHT</a></li>
+</ul>
+
+-->
+
+
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>ftpgw.tcl &#151; トンネリングを可能にする FTPゲートウエイスクリプト</p>
+<p>
+</p>
+<hr />
+<h1><a name="____">書式</a></h1>
+<p><strong>ftpgw.tcl</strong> [<strong>-p</strong> &lt;port-range&gt;] [<strong>-v</strong>] [<em>listen-port</em> [<em>ftpd-host</em> [<em>ftpd-port</em>]]]</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>このプログラムは単純なFTPゲートウエイであり、
+PORTコマンドとパッシブモードのレスポンスに干渉し、
+関連づけられたデータストリームを扱えるハンドラを起動する。
+それから、コントロールコマンドを書換えて、
+あたかも、FTPサーバへのトラフィックがゲートウエイプロセスから来ているかのように見せる。
+同様に、クライアントはパッシブモードの通信が可能なリモートポートを見ることになる。
+この方法で、FTPのコントロールチャンネルは暗号化されてトンネルされる
+(ただし、データチャネルはそうではない)。</p>
+<p>デフォルトでは、このプログラムは2121番ポートをlistenして、
+ローカルの21番ポートにいるFTPサーバにリダイレクトする。
+これらの値はコマンドラインから変更できる。
+<strong>-v</strong>オプションはメッセージログを標準エラー出力に切り替える。</p>
+<p>もし<strong>-p</strong>オプションが指定されていたら、
+引数は<em>xxx</em>-<em>yyy</em>という形式のポート番号の範囲になる。
+全てのパッシブモードのデータポートは<em>xxx</em> から <em>yyy</em> の中になる。
+そして、クライアントへのレスポンスラインは127.0.0.1(localhost)の対応するポートになる。
+この方法で、コントロールコネクションに加えて、
+パッシブモードのデータコネクションもトンネルすることが可能である。</p>
+<p>
+</p>
+<hr />
+<h1><a name="copyright">COPYRIGHT</a></h1>
+<p>Copyright (c) 2000 by Neil Winton. All Rights Reserved.</p>
+<p>This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.</p>
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.</p>
+<p>You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
+USA.</p>
+
+</body>
+
+</html>

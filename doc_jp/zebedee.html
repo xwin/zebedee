@@ -1,0 +1,1821 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Zebedee: A simple, secure IP tunnel</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:rurban@x-ray.at" />
+<style>
+<!--
+body, p, h1, h2, h3, h4, h5, td {
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+}
+h1, h2, h3, h4, h5 {
+    color: blue;
+}
+p, td {
+    font-size: 12pt;
+}
+pre {
+    font-family: Courier New, Courier, monospace;
+    font-size: 11pt;
+}
+code {
+    font-family: Courier New, Courier, monospace;
+    font-size: 12pt;
+}
+-->
+</style>
+</head>
+
+<body style="background-color: white">
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+<!--
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#____">書式</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#_____________what_s_in_a_name_">名前の由来は?(What&#146;s in a name?)</a></li>
+		<li><a href="#_______________basic_usage_">基本的な使い方(Basic Usage)</a></li>
+		<li><a href="#udp_____________udp_tunnelling_">UDPトンネリング(UDP Tunnelling)</a></li>
+		<li><a href="#___________some_terminology_">言葉の定義(Some Terminology)</a></li>
+		<li><a href="#_________________multiple_destinations_">複数のターゲット(Multiple Destinations)</a></li>
+		<li><a href="#_________________server_initiated_connections_">サーバ主導の接続(Server-Initiated Connections)</a></li>
+		<li><a href="#_____________configuration_file_">設定ファイル(Configuration File)</a></li>
+		<ul>
+
+			<li><a href="#___________________________client_only_keywords_">クライアント専用キーワード(Client-Only Keywords)</a></li>
+			<li><a href="#_____________________server_only_keywords_">サーバ専用キーワード(Server-Only Keywords)</a></li>
+			<li><a href="#_____________________________compression_and_encryption_keywords_">圧縮と暗号化関連のキーワード(Compression and Encryption Keywords)</a></li>
+			<li><a href="#_________________miscellaneous_keywords_">様々なキーワード(Miscellaneous Keywords)</a></li>
+			<li><a href="#_____________________obsolete_keywords_">廃止されたキーワード(Obsolete Keywords)</a></li>
+			<li><a href="#___________________other_options_">その他のオプション(Other Options)</a></li>
+			<li><a href="#_____________________quick_reference_summary_">クイックリファレンス(Quick-Reference Summary)</a></li>
+		</ul>
+
+		<li><a href="#identity_checking">Identity Checking</a></li>
+		<li><a href="#_______________________________notes_on_other_security_issues_">その他のセキュリティ関連の注記(Notes on Other Security Issues)</a></li>
+	</ul>
+
+	<li><a href="#_______________________troubleshooting_">トラブルシューティング(TROUBLESHOOTING)</a></li>
+	<li><a href="#examples">EXAMPLES</a></li>
+	<ul>
+
+		<li><a href="#_______________example_server_configuration_">サーバ設定の例(Example Server Configuration)</a></li>
+		<li><a href="#vnc_________use_with_vnc_">VNCの使用例(Use with VNC)</a></li>
+		<li><a href="#x_window_system_________use_with_the_x_window_system_">X Window Systemの使用例(Use with the X Window System)</a></li>
+		<li><a href="#http___________________securing_http_traffic_">HTTPの通信を安全にする(Securing HTTP traffic)</a></li>
+		<li><a href="#ftp___________________securing_ftp_traffic_">FTPの通信を安全にする(Securing FTP traffic)</a></li>
+	</ul>
+
+	<li><a href="#credits_and_legalities">CREDITS AND LEGALITIES</a></li>
+	<ul>
+
+		<li><a href="#thanks">Thanks</a></li>
+	</ul>
+
+</ul>
+
+-->
+
+
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Zebedee &#151; シンプルでフリーでセキュアなトンネルプログラム</p>
+<p>
+</p>
+<hr />
+<h1><a name="____">書式</a></h1>
+<dl>
+<dt><strong><a name="server" class="item">Server:</a></strong></dt>
+
+<dd>
+<p><strong>zebedee</strong> <strong>-s</strong> [<strong>-dDtu</strong>] [<strong>-c</strong> <em>host</em>] [<strong>-f</strong> <em>file</em>] [<strong>-k</strong>
+<em>keybits</em>] [<strong>-n</strong> <em>name</em>] [<strong>-o</strong> <em>logfile</em>] [<strong>-r</strong> <em>ports</em>]
+[<strong>-T</strong> <em>port</em>] [<strong>-v</strong> <em>level</em>] [<strong>-x</strong> <em>config</em>] [<strong>-z</strong> <em>level</em>]
+[<em>target</em> ...]</p>
+</dd>
+<dt><strong><a name="client" class="item">Client:</a></strong></dt>
+
+<dd>
+<p><strong>zebedee</strong> [<strong>-dDlmtu</strong>] [<strong>-e</strong> <em>command</em>] [<strong>-f</strong> <em>file</em>]
+[<strong>-k</strong> <em>keybits</em>] [<strong>-n</strong> <em>name</em>] [<strong>-o</strong> <em>log</em>] [<strong>-T</strong> <em>port</em>] [<strong>-v</strong>
+<em>level</em>] [<strong>-x</strong> <em>config</em>] [<strong>-z</strong> <em>level</em>] [server] [<em>tunnel-spec</em> ...]</p>
+</dd>
+<dt><strong><a name="key_generation" class="item">Key generation:</a></strong></dt>
+
+<dd>
+<p><strong>zebedee</strong> <strong>-p</strong> [<strong>-f</strong> <em>file</em>]</p>
+<p><strong>zebedee</strong> <strong>-P</strong> [<strong>-p</strong>] [<strong>-f</strong> <em>file</em>]</p>
+</dd>
+<dt><strong><a name="hash_generation" class="item">Hash generation:</a></strong></dt>
+
+<dd>
+<p><strong>zebedee</strong> <strong>-h</strong> [<em>file ...</em>]</p>
+<p><strong>zebedee</strong> <strong>-H</strong> <em>string</em> ...</p>
+</dd>
+<dt><strong><a name="windows_service" class="item">Windows Service:</a></strong></dt>
+
+<dd>
+<p><strong>zebedee</strong> [<strong>-n</strong> <em>name</em>] <strong>-S</strong> [install[=<em>file</em>] | remove | run]</p>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p><strong>Zebedee</strong>は2つのシステム間で、
+暗号化され、圧縮されたTCP/IPまたはUDPの&quot;トンネル&quot;を確立する単純なプログラムである。 
+これは、低帯域のネットワーク上でのパフォーマンスを圧縮により向上するだけでなく、
+<strong>telnet</strong>, <strong>ftp</strong> や <strong>X</strong> などの TCP ベースの
+トラフィックを盗聴から防御することも可能にする。
+また、暗号化の有無にかかわらずデータ圧縮を使用することで、
+遅いネットワークで良好なパフォーマンスを得ることも可能である。</p>
+<p><strong>Zebedee</strong> の主な目的は:</p>
+<ul>
+<li>
+<p>UNIX と Windows 95/98/NT の双方にてクライアントとサーバーの機能を提供する。</p>
+</li>
+<li>
+<p>ほんの少しの設定か全くの設定無しで簡単にインストール、使用、保守ができる。</p>
+</li>
+<li>
+<p>少しの付加データと、少ないプロトコルのオーバヘッドにて、
+圧縮により多大なトラフィックの低減を行う。</p>
+</li>
+<li>
+<p>特許化されていないか、または特許の有効期限が切れているアルゴリズムのみを用いる。</p>
+</li>
+<li>
+<p>GNU 一般公有使用許諾書(GPL)のもとで商用、非商用を問わず
+完全にフリーに使用・配布ができる (<a href="#credits_and_legalities">CREDITS AND LEGALITIES</a> を見よ)。</p>
+</li>
+</ul>
+<p>もちろん、<strong>Zebedee</strong> は初めてのあるいは唯一の利用可能な
+セキュアなトンネルプログラムではない。 
+高機能という面では <strong>ssh</strong> や <strong>SSL</strong> などとは比べ物にもならないが、
+もし、素早く、単純で、<strong>完全にフリー</strong>なものを求め
+ているなら、これはピッタリのツールだろう。</p>
+<p>この文書は <strong>Zebedee</strong> リリース 2.2.0 の機能について記している.</p>
+<p>
+</p>
+<h2><a name="_____________what_s_in_a_name_">名前の由来は?(What&#146;s in a name?)</a></h2>
+<p>あなたが疑問を持とうが持つまいが、<strong>Zebedee</strong> は次の 3つの主要なコンポー
+ネントから命名された。</p>
+<ul>
+<li>
+<p><strong>Z</strong>lib による圧縮</p>
+</li>
+<li>
+<p><strong>B</strong>lowfish による暗号化</p>
+</li>
+<li>
+<p><strong>D</strong>iffie-Hellman による認証</p>
+</li>
+</ul>
+<p>これでわかったよね?</p>
+<p>
+</p>
+<h2><a name="_______________basic_usage_">基本的な使い方(Basic Usage)</a></h2>
+<p>ローカルマシンとリモートホストを安全に接続するには、
+まずリモートホストの方で、<strong>Zebedee</strong> をサーバーモードで起動する必要がある。
+一番簡単な方法は、<strong>-s</strong> オプションを使うことだ。</p>
+<pre>
+ zebedee -s</pre>
+<p>うまくいけば(いくはず！)<strong>Zebedee</strong>は
+端末(windowsではコンソールウインドウ)から切り離されてバックグラウンドで走る。
+そして、クライアントからの接続を待つ。</p>
+<p>次にクライアントマシンで<strong>Zebedee</strong>をクライアントモードで起動する。
+この場合は、リモートホストのホスト名とトンネルすべきサービス名かポート番号
+(ここではこれをターゲットポートと呼ぶことにする)を指定する。
+例えば、リモートホストの名前が<code>remhost</code>で
+安全な<strong>telnet</strong>セッションを張りたいとしたら、こうなる。</p>
+<pre>
+ zebedee remhost:telnet</pre>
+<p>実際には、ポートのデフォルトがtelnetなので
+このケースでは次のように省略してもよい。</p>
+<pre>
+ zebedee remhost</pre>
+<p>このコマンドを実行すると、
+トンネルの入口になる(ローカル側の)ポートの番号が表示される。
+<strong>Zebedee</strong>は端末から切り離されてバックグラウンドで走り、
+このローカル側のポートに接続されるのを待つ。
+例えば、1234と表示されたら、</p>
+<pre>
+ telnet localhost 1234</pre>
+<p>とすれば、<code>remhost</code>に安全なトンネル経由で接続される。</p>
+<p>デフォルトでは、<strong>Zebedee</strong>はプロセスを終了させるまで接続を待ち続けて、
+必要があれば同時発生する複数のコネクションを処理する。</p>
+<p>時には、<strong>Zebedee</strong>を起動し、
+その後すぐにそのポートに接続するコマンドを起動したいこともあるだろう。
+これを一発でやるには次のようにする。</p>
+<pre>
+ zebedee -e &quot;telnet localhost %d&quot; remhost</pre>
+<p>文字列中の&quot;<code>%d</code>&quot;がローカルポート番号と置き換えられる。従って、
+<strong>Zebedee</strong>はポート番号を表示しない(する必要がない)。
+このようにコマンドを指定した場合には、そのコマンドが接続を終了すると同時に、
+ローカル側の<strong>Zebedee</strong>クライアントも終了する。</p>
+<p>クライアントが使用するローカルポート番号を指定したい(する必要がある)こともあるだろう。
+(保護したい通信を行なう)コマンドが、特定のポートに接続しようとする場合だ。
+この場合は、<strong>Zebedee</strong>を次のように起動することで、
+ローカルポートを指定することもできる。</p>
+<pre>
+ zebedee clientport:hostname:targetport</pre>
+<p>例えば、次のコマンド:</p>
+<pre>
+ zebedee 8000:webhost:80</pre>
+<p>は、クライアントの8000番ポート経由で接続する、
+<strong>webhost</strong>への全てのHTTP接続を保護する。
+詳細は<em>EXAMPLES</em>参照のこと。</p>
+<p>また、<strong>Zebedee</strong> クライアントは 
+同一ホスト内の複数のターゲットポートに対して、
+複数のトンネルを(同時並行的に)扱うこともできる。
+この場合は、ローカルとリモートのポートの指定はポート番号のリストになる。
+例えば</p>
+<pre>
+ zebedee 9001,9002,9003:somehost:daytime,telnet,ftp</pre>
+<p>これは、9001番のクライアントポートへの通信を、
+リモートのターゲットシステムの<strong>daytime</strong>ポートへとトンネルする。
+同様に、9002番は<strong>telnet</strong>ポートへ、9003番は<strong>ftp</strong>ポートへトンネルする。</p>
+<p>この、クライアント側の受けつけポート、ターゲットとなるホスト、そして目的
+のポート番号の組み合わせは「トンネル仕様(tunnel specification)」と呼ばれ
+る。詳しくは <strong><a href="#item_tunnel">tunnel</a></strong> キーワード参照のこと。</p>
+<p>
+</p>
+<h2><a name="udp_____________udp_tunnelling_">UDPトンネリング(UDP Tunnelling)</a></h2>
+<p><strong>Zebedee</strong>はもともとは TCP/IP のトラフィックだけを扱うように設計されたが、
+バージョン2.0.0からはコネクションレスのUDPのデータも扱えるようになった。
+この機能を有効にするには<strong>Zebedee</strong>を <strong>-u</strong> オプション付きで起動する
+(または、<strong><a href="#item_udpmode">udpmode</a></strong> キーワードを使用する)。
+例えばサーバ側で</p>
+<pre>
+ zebedee -s -u</pre>
+<p>クライアント側で</p>
+<pre>
+ zebedee -u 10000:somehost:echo</pre>
+<p>を実行する。なお、ひとつのクライアントとサーバは、TCPかUDPのどちらかを扱い、
+両方同時に扱うことはできない。両方のタイプをトンネルするには、
+2つの独立したインスタンスを起動する。
+TCPモードとUDPモードのサーバは違うポートを使うので、
+両者を同じシステムで起動することは安全である。</p>
+<p>UDPモードでも<strong>Zebedee</strong>のクライアントとサーバ間のトンネルはTCP/IPで接続する。
+この接続は無通信が一定時間続くとタイムアウトする。
+タイムアウトしてからさらにデータが来るとトンネルの再接続を行う必要があるので、
+アプリケーションの特性によっては
+UDPモードのパフォーマンスがよくないように見えることもある。
+また、扱えるUDPダイアグラムのサイズにも制限があることにも注意すること。</p>
+<p>詳細は、<strong><a href="#item_maxbufsize">maxbufsize</a></strong>、
+<strong><a href="#item_udpmode">udpmode</a></strong>、 <strong><a href="#item_udptimeout">udptimeout</a></strong>
+を参照のこと。</p>
+<p>
+</p>
+<h2><a name="___________some_terminology_">言葉の定義(Some Terminology)</a></h2>
+<p>通常は、<strong>Zebedee</strong>によってトンネルをセットアップしようとする場合、関係するシステムは2つである。
+片方でクライアントを起動して、ローカルポートでそれと通信する。
+反対側ではサーバを起動して、そのシステムで動作しているサービスと会話する。
+しかしながら、次のように最大4つのシステム(マシン)が関係するケースもありえる。</p>
+<pre>
+ [ソース] &lt;===&gt; [クライアント] &lt;=====&gt; [サーバ] &lt;===&gt; [ターゲット]
+            |                     |               |
+            +- 安全でない         |               + 安全でない
+               接続               |                 接続
+                                  +- 安全なトンネル</pre>
+<p><strong>Zebedee</strong>のクライアントは「クライアント」システムで、
+サーバは「サーバ」システムでそれぞれ動作している。
+トンネル設定の契機となる最初の接続は「ソース」マシンから発生する。
+「ソース」と「クライアント」は違うシステムであってもかまわないが、
+通常は同一のシステムである。
+サーバは最後に「ターゲット」システムと通信する。
+ターゲットも普通はソースと同じマシンになるが、違うマシンであっても全く問題はない。</p>
+<p>ほとんどの場合、「ソース」と「クライアント」、
+「サーバ」と「ターゲット」の違いを気にする必要はない。
+しかし、この用語の区別が以下に述べるキーワードに多く反映している。
+キーワードの説明を読む時には、このことを頭に入れておいたほうがいいだろう。</p>
+<p><strong>Zebedee</strong>のトンネルに関係するこの4つシステムの問題と別に、
+安全に接続するために、いくつかの全く違うタイプの「キー(key)」が使われる。
+クライアントとサーバは<strong>private key</strong>(秘密鍵)という値を必要とする
+(自分で生成する場合もある)。
+このキーからは、public values が計算され交換され、
+それにより<strong>shared secret key</strong> が導き出される
+(この時にDiffie-Hellman key agreement mechanism が使用される)。
+このキーからは、接続のたびにユニークな<strong>session key</strong>が導き出され、
+最終的にこのキーで暗号化が行なわれる。</p>
+<p>
+</p>
+<h2><a name="_________________multiple_destinations_">複数のターゲット(Multiple Destinations)</a></h2>
+<p>2.1.0以前の<strong>Zebedee</strong>では、ひと組のクライアント/サーバのペアは、
+ターゲットなるホストをひとつしか扱えなかった。
+しかしこのバージョンからは、
+複数のターゲットへのトンネルを扱うことができる。</p>
+<p>サーバを起動する時に、
+コマンドラインか <strong><a href="#item_target">target</a></strong> キーワードから
+複数のターゲットを与えることができる。
+ターゲットとはホスト名であり、
+後に接続を許可するポート番号のリストをつけてもよい。</p>
+<p><strong>serverhost</strong>というマシンで以下のコマンドを実行したとしよう。</p>
+<pre>
+ zebedee -s target1:daytime,telnet target2:telnet target3</pre>
+<p>そのサーバは、<strong>target1</strong>の<strong>daytime</strong>ポートと<strong>telnet</strong>ポートに対する接続と、
+<strong>target2</strong>の<strong>telnet</strong>に対する接続、
+及び、<strong>target3</strong>に対する全てのポートへの接続を許可する。</p>
+<p>サーバを以上のように起動したら、クライアントは次のようになるだろう。</p>
+<pre>
+ zebedee serverhost 10000:target1:telnet 20000:target3:telnet</pre>
+<p>このコマンドにより、<strong>serverhost</strong>の<strong>Zebedee</strong> サーバに接続し、
+そのサーバを次のような2つのトンネルの設定に使用する。
+まずクライアントのポート10000から<strong>target1</strong>の<strong>telnet</strong>ポートへのトンネル、
+次がクライアントのポート20000から<strong>target3</strong>の<strong>telnet</strong>ポートへのトンネルである。
+サーバが動作しているホストの名前が最初のパラメータとして与えられていることに注意してほしい。
+もしサーバ名を省くと最初の「トンネル仕様」から持ってくることになる。</p>
+<p>もしサーバが<strong>target3</strong>で動作しているならば、
+上のコマンドは次のようにしても同じことになる。</p>
+<pre>
+ zebedee 20000:target3:telnet 10000:target1:telnet</pre>
+<p>実際の所、サーバは「デフォルトターゲット」という概念を持っている。
+これは<em>最後に</em>指定されたターゲットのことである。
+上記の例では「デフォルトターゲット」は<strong>target3</strong>になっている。
+もしサーバ側とクライアント側のターゲットの指定が同じだったら、
+このターゲットが使用される。
+予想と違う結果を得ることがあるので、このことには充分注意してほしい。
+例えばサーバが次のように起動されたとしよう。</p>
+<pre>
+ zebedee -s target2:telnet target3 target1:daytime,telnet</pre>
+<p>この場合は、上に例示したクライアントを起動するコマンドによって、
+20000番ポートへの接続は、<strong>target3</strong>でなく<strong>target1</strong>に対してトンネルされることになる。
+サーバで指定されたターゲットとクライアントで指定されたターゲットが同じだった時は、
+通信は「デフォルトターゲット」に向かうからだ。
+混乱を避けるためには、サーバのホストが宛先リストに含まれる場合は、
+必ず最後にそれを置くようにすればよい。
+「デフォルトターゲット」と同様に、
+ポート指定がなかった時のための、
+複数の「デフォルトターゲットポート」のリストを指定することもできる。
+詳細は<strong><a href="#item_redirect">redirect</a></strong>を参照してほしい。</p>
+<p><strong><a href="#item_target">target</a></strong>キーワードと同様に、
+クライアント用の同等のコマンドラインパラメータとして、
+<strong><a href="#item_tunnel">tunnel</a></strong> キーワード (and <strong><a href="#item_serverhost">serverhost</a></strong>がある。
+これによって、サーバホストを明示的に指定することができる。</p>
+<p>
+</p>
+<h2><a name="_________________server_initiated_connections_">サーバ主導の接続(Server-Initiated Connections)</a></h2>
+<p>通常の使用法では、
+ソースシステムから接続を受けた時点で、
+<strong>Zebedee</strong>クライアントがサーバに対する接続を開始する。
+しかし、<strong>Zebedee</strong>を制限のあるファイアーウォール越しに使用する場合など、
+逆向きにサーバからクライアントに対して接続を開始することが必要な場合もある。
+これをどうやるかの詳細については、
+<strong><a href="#item_clienthost">clienthost</a></strong> キーワードと
+<strong><a href="#item_listenmode">listenmode</a></strong>キーワードを参照のこと。</p>
+<p>
+</p>
+<h2><a name="_____________configuration_file_">設定ファイル(Configuration File)</a></h2>
+<p><strong>Zebedee</strong> の動作をコントロールするには、
+設定ファイルを使うのがおそらく一番よい。設定ファイルを指定するには
+コマンドラインオプションで <strong>-f</strong>を使う。ファイルは(<strong>-f</strong>)オプションの位
+置で処理される。従って、それ以降のコマンドラインオプションでファイルの内
+容を上書きすることができる。</p>
+<p>行の形式は以下のとおり。</p>
+<pre>
+ keyword value # optional comment</pre>
+<p><em>keyword</em>はひとつの単語であり大文字小文字は無視される。<em>value</em>は単語か文字
+列かどちらかである。
+文字列はダブルクォート(<code>&quot;こんな風に&quot;</code>)かシングルクォート
+(<code>&#146;こんな風に&#146;</code>)でくくられる。ダブルクォート &quot; の中に
+シングルクォート &#146; があってもよいし(<code>&quot;here&#146;s an example&quot;</code>)、その逆も言える。
+value では大文字小文字の違いは区別される。</p>
+<p>空白行と&quot;<code>#</code>&quot;ではじまる行(その前に空白があっても同じ)は無視される。
+長い文字列は &quot;<code>\</code>&quot;で次の行に継続することもできる。
+この文字は除去され、次の行がこの行に接続される。
+1行の長さは継続行も含め 1024 文字に制限されていることに注意。
+行の接続はコメントの認識を含めすべての処理に先だって行われる。
+そのため以下の例</p>
+<pre>
+ server false
+ # This comment continues on the next line \
+ server true</pre>
+<p>では、<strong>server</strong>の値は <strong>false</strong>になる。</p>
+<p>キーワードとその意味は以下に述べる。
+<a href="#quick_reference_summary">Quick-Reference Summary</a>には、全てのキーワードの簡潔な要約がある。
+ほとんどのキーワードは対応するコマンドラインオプションがあるが、
+なかには対応するオプションがないものもある。
+対応するコマンドラインオプションがあるものについてはそれも併記してある。
+逆に、コマンドラインオプションの中には
+設定ファイル内のキーワードに対応するものがないものもある。
+それらはこのセクションの最後に述べる。</p>
+<p>キーワードが真偽値(boolean)と書かれていたら、
+その値は&quot;<strong>true</strong>&quot; または &quot;<strong>false</strong>&quot;でなければならない。</p>
+<p>キーワードの中にはポートのリストを指定するものがある。
+この場合は、ポート名(サービス名)、ポート番号、番号の範囲を
+コンマか空白で区切ったものを指定する。
+例えば、&quot;<code>telnet, ftp 5900-5903</code>&quot;は 
+&quot;<code>23,21,5900,5901,5902,5903</code>&quot;と等しい。</p>
+<p>また、クライアントだけに指定するキーワードもあるし、
+サーバだけに指定するキーワードもある。
+ひとつの <strong>Zebedee</strong> プログラムはサーバかクライアントかどちらかひとつの機能を実行し、
+その時の用途と違う用途向けのオプションは無視する。
+エラーメッセージも表示しない。
+サーバになるかクライアントになるかは、
+<strong><a href="#item_server">server</a></strong> キーワードで決まる。</p>
+<dl>
+<dt><strong><a name="server" class="item"><strong>server</strong> (コマンドラインでは <strong>-s</strong>)</a></strong></dt>
+
+<dd>
+<p>これは、クライアントになるかサーバになるかを決める真偽値のキーワードである。
+これが指定されなかった場合は、クライアントとして動作する。
+コマンドラインオプションの <strong>-s</strong> オプションはこの値を<strong>true</strong>にするのと等しい。</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="___________________________client_only_keywords_">クライアント専用キーワード(Client-Only Keywords)</a></h3>
+<p>以下のキーワードはクライアントだけに適用される。</p>
+<dl>
+<dt><strong><a name="command" class="item"><strong>command</strong> (コマンドラインでは <strong>-e</strong>)</a></strong></dt>
+
+<dd>
+<p>クライアントとして動作している時に意味を持つ。
+これは、トンネルへ接続した後に起動されるコマンドを示す。
+この値が &quot;<code>%d</code>&quot; という文字列を含んでいたら、実行時にローカルポート番号と置き変えられる
+(<strong><a href="#item_tunnel">tunnel</a></strong> キーワード 参照)。
+この処理は<strong>sprintf</strong>関数を使用して行なうので、
+&quot;<code>%</code>&quot;によるエスケープ処理が適用される
+(すなわち、&quot;<code>%</code>&quot; を 1 文字生成するためには &quot;<code>%%</code>&quot; を使う)。
+さらに、&quot;<code>%d</code>&quot; を二つ以上指定したり &quot;<code>%d</code>&quot; 以外のフォーマット指定子
+を指定すると、おそらくプログラムはクラッシュするだろう。</p>
+<p>コマンドが接続を閉じたら、<strong>Zebedee</strong>も終了する。
+このキーワードおよびオプションを使用すると、暗黙のうちにマルチユースモードがOFFになる
+(<strong><a href="#item_multiuse">multiuse</a></strong>参照)。
+<strong>Zebedee</strong> クライアントが複数の接続を扱う場合
+(<strong><a href="#item_multiuse">multiuse</a></strong>)やポートのリストが 
+<strong><a href="#item_tunnel">tunnel</a></strong>キーワードかコマンドラインで指定された場合は、コマンドの自動起動は
+使用することができない。</p>
+</dd>
+<dt><strong><a name="listenmode" class="item"><strong>listenmode</strong> (command-line <strong>-l</strong>)</a></strong></dt>
+
+<dd>
+<p>通常の使用法では、
+ソースシステムから接続を受けた時点で、
+<strong>Zebedee</strong>クライアントがサーバに対する接続を開始する。
+しかし、<strong>Zebedee</strong>を制限のあるファイアーウォール越しに使用する場合など、
+逆向きにサーバからクライアントに対して接続を開始することが必要な場合もある。</p>
+<p><strong>listenmode</strong>キーワードが真ならば、
+<strong>Zebedee</strong>クライアントは直接接続しようとするかわりに、
+サーバが接続を開始するのを待つ。
+サーバからの接続要求はすぐには受けつけられず、
+ソースシステムからそれに対応する接続が行われるまで待たされる。
+しかしながら、もしクライアントにトンネルの目的地について選ぶ権利がないと、
+どのサーバから接続されるかわかったものではない。
+その用心のために、コマンドラインか、
+クライアントには<strong><a href="#item_serverhost">serverhost</a></strong> キーワードか、
+最初のトンネル仕様の一部として、サーバアドレスを指定することができるようになっている。
+クライアントは(実際の接続が)これと一致するか確認して、接続の正当性を判断する。</p>
+<p>(訳注：通常は</p>
+<p>ソース(1)→クライアント(2)→サーバ(3)→ターゲット</p>
+<p>という方向と順番でconnect(接続要求)が行なわれるが、リッスンモードでは</p>
+<p>ソース(2)→クライアント←(1)サーバ(3)→ターゲット</p>
+<p>となる。つまり、ソースからの接続の前にサーバからクライアントに接続に行く)</p>
+<p>特殊な場合として、もしサーバの名前が&quot;<code>*</code>&quot;ならば、
+どのサーバアドレスからの接続も受けつけられる。
+サーバからの接続を確実にするためには、
+<a href="#identity_checking">identity checking</a>機能を併用することをおすすめする。</p>
+<p>もし一定時間内にサーバからの接続がないと、
+ソースシステムへの接続は閉じられプロセスは中断する。
+この待ち時間は<strong><a href="#item_connecttimeout">connecttimeout</a></strong>キーワードで制御できる。
+既定値は300秒である。</p>
+<p>このプロセスのサーバ側の動きについては<strong><a href="#item_clienthost">clienthost</a></strong>参照のこと。</p>
+</dd>
+<dt><strong><a name="localsource" class="item"><strong>localsource</strong></a></strong></dt>
+
+<dd>
+<p>この値が<strong>true</strong>だと、クライアントはローカルマシンで発生した接続だけを受けつける。
+別の言葉で言うと、「ソース」と「クライアント」が同一のシステムである必要がある。</p>
+<p>この値はデフォルトは<strong>false</strong>であり、どのマシンがソースとなっても接続を受けつける。</p>
+</dd>
+<dt><strong><a name="multiuse" class="item"><strong>multiuse</strong> (コマンドラインでは <strong>-m</strong>)</a></strong></dt>
+
+<dd>
+<p>この値が<strong>true</strong>だと(デフォルトではそうなっているが)、
+<strong>Zebedee</strong>のクライアントは複数の接続要求(同時並行的に発生してもよい)を扱い、
+要求ひとつひとつに対して、新しいトンネルを設置する。
+値が<strong>false</strong>だと、クライアントはシングルユースモードで動作し、
+最初の接続が閉じられた直後に終了する。</p>
+<p>コマンドラインの<strong>-m</strong>オプションはこれを<strong>true</strong>に設定するのと等しい。
+現在のバージョンの<strong>Zebedee</strong>はこれがデフォルトだが
+(だから、このオプションを設定する必要はないが)、
+後方互換性のために残されている。</p>
+<p>クライアントが複数のポートを待ち受ける場合は、
+たとえこれが<strong>false</strong>に設定されていても、
+自動的に マルチユースモードになる。
+(<strong><a href="#item_clientport">clientport</a></strong> 参照)</p>
+</dd>
+<dt><strong><a name="serverhost" class="item"><strong>serverhost</strong></a></strong></dt>
+
+<dd>
+<p>これはトンネルを接続しようとする<strong>Zebedee</strong>サーバが稼働しているリモートホストの名前である。
+ホストの名称にはデフォルトはないので、
+設定ファイルかコマンドラインのどちらかで、
+必ずこれを指定しなければならない。</p>
+<p>サーバ主導の接続を行なう時のこの値の意味については、
+<strong><a href="#item_listenmode">listenmode</a></strong>参照。</p>
+<p>2.0.0より前のバージョンでは、同じ意味で<strong>remotehost</strong>というキーワードが使用されていた。
+後方互換性のために、このキーワードは現バージョンでも認識される。</p>
+</dd>
+<dt><strong><a name="tunnel" class="item"><strong>tunnel</strong></a></strong></dt>
+
+<dd>
+<p>これは、コロンで分けられた3つのパートからなる文字列である。
+例えば</p>
+<pre>
+ 10000-10002:targethost:echo,telnet,daytime</pre>
+<p>最初の部分は<strong>Zebedee</strong>クライアントが接続を待つポート番号のリストである。
+二番目がトンネルされたデータが向かうべきターゲットホストの名前である。
+最後のパートはターゲットポートのリストであり、
+これはクライアントが待つポートのリストと対応している。
+クライアントとターゲットのポートの数は一致していなければならない。</p>
+<p>特殊な場合として、
+ターゲットポートがひとつだけのトンネル仕様が単独で与えられる時には、
+クライアントのポートリスト(と区切りのコロン)は省いてもよい。
+クライアントポートは自動的に割り当てられる
+(そして、そのポート番号を示すメッセージが端末に表示される)
+これは後方互換性のためと<strong><a href="#item_command">command</a></strong>の使用時のために許さ
+れている。
+もしターゲットポートも省略されたら、既定値として<strong>telnet</strong>(ポート23)になる。</p>
+<p><a href="#_________________multiple_destinations_">複数のターゲット(Multiple Destinations)</a>で述べたように、
+<strong>Zebedee</strong>サーバがコマンドラインの最初の引数としても
+<strong><a href="#item_serverhost">serverhost</a></strong>キーワードでも指定されなかったら、
+最初に見つかったトンネル仕様から取られる。</p>
+<p>トンネル仕様の変則的な形式がもうひとつだけある。
+この場合はターゲットホストは&quot;<code>*</code>&quot;で置きかえられる。
+このワイルドカード形式はリッスンモード(詳細は<strong><a href="#item_listenmode">listenmode</a></strong> 参照)でクライアントを起動する時と、
+サーバーのデフォルトターゲットに対してトンネル接続を行ないたい時に使用される。
+後者は、どのサーバにも適用できるようなコンフィギュレーションファイルを書きたい時に使用される。
+例えば、このようになる。</p>
+<pre>
+ server false
+ tunnel 10000:*:daytime
+ tunnel 20000:*:echo
+ tunnel 30000:*:telnet</pre>
+<p>これは、次のような形でコマンドラインで指定されたサーバに対して
+(それがどのホストであれ)10000番、20000番、30000番のポートにトンネルを作成する。</p>
+<pre>
+ zebedee -f configfile serverhost</pre>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="_____________________server_only_keywords_">サーバ専用キーワード(Server-Only Keywords)</a></h3>
+<p>以下のキーワードはサーバとして動作する時に適用する。</p>
+<dl>
+<dt><strong><a name="clienthost" class="item"><strong>clienthost</strong> (command-line <strong>-c</strong>)</a></strong></dt>
+
+<dd>
+<p><strong>clienthost</strong>が指定されていると、
+サーバはすぐにそのホスト(の<strong><a href="#item_serverport">serverport</a></strong>で指定されたポート)に接続しようとする。
+そのアドレスでは、リッスンモード(<strong><a href="#item_listenmode">listenmode</a></strong>参照)のクライアントが起動されていなければならない。
+ひとたびクライアントへの接続が確立したら、プロトコルは通常どおりに情報交換を行なう。</p>
+<p>クライアントによって接続が受けつけられるたびに、
+サーバは反対側の接続を試みる。
+接続が一定の時間内に受けつけられないと、
+(クライアント側の接続を)閉じてサーバは終了し現在のアクティブなトンネルは全て閉じられる。
+この待ち時間は<strong><a href="#item_connecttimeout">connecttimeout</a></strong>キーワードで制御される。
+既定値は300秒である。</p>
+<p><strong>Zebedee</strong>自身は、
+「逆向きトンネル」のセットアップのために、
+サーバーとクライアントを協調して起動させる手段は提供していないことに注意されたい。
+そのためには、なんらかの「帯域外」のメカニズムが必要である。</p>
+</dd>
+<dt><strong><a name="redirect" class="item"><strong>redirect</strong> (command-line <strong>-r</strong>)</a></strong></dt>
+
+<dd>
+<p>このキーワードはサーバがリダイレクトするポートのリストである。
+(例 &quot;<code>telnet,ftp, 5900-5910</code>&quot;)
+もし <strong>redirect</strong> キーワードが指定されない場合は、
+どのポートへのトンネル接続要求も受け付けられる。
+この方法(<strong>redirect</strong>を指定しないこと)はテスト中には便利だが、
+セキュリティー面でのリスクがあるので、
+もし可能ならば(このキーワードで)明示的に許可するポートを指定すべきである。</p>
+<p>このキーワード(または<strong>-r</strong>オプション)は複数指定されてもよい。この場合は、
+そのうちどれかのポートに指定されていればリダイレクトが許可される。</p>
+</dd>
+<dt><strong><a name="target" class="item"><strong>target</strong></a></strong></dt>
+
+<dd>
+<p>これはターゲットホストを指定する。
+また、サーバがリダイレクトしたデータを受けつけるポートのリストも指定できる。
+コロンで区切られたターゲットホストの名前とポートのリストで指定する。
+例えば次のようになる。</p>
+<pre>
+ target www.winton.org.uk:http,ftp</pre>
+<p>もしポートのリスト(とコロン)が省略されていたら、
+リダイレクションの要求は<strong><a href="#item_redirect">redirect</a></strong>文の指定で(もしあれば)制御される。</p>
+<p>このキーワードは同じ形式のコマンドラインの引数と同じ意味である。
+(<a href="#_________________multiple_destinations_">複数のターゲット(Multiple Destinations)</a>参照)。
+これは何回繰り返してもよい。
+このキーワードとコマンドラインを通して最後のターゲットが、
+クライアントが宛先としてサーバのホスト名を指定した時の、
+トンネルの目的地となる。</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="_____________________________compression_and_encryption_keywords_">圧縮と暗号化関連のキーワード(Compression and Encryption Keywords)</a></h3>
+<p>以下のキーワードは、トンネル内を流れるデータの圧縮と暗号化を制御する。
+これらは、クライアントとサーバどちらでも使用される。</p>
+<dl>
+<dt><strong><a name="compression" class="item"><strong>compression</strong> (コマンドラインでは <strong>-z</strong>)</a></strong></dt>
+
+<dd>
+<p><strong>Zebedee</strong> は圧縮方式として <strong>zlib</strong> をサポートする。
+そして、もしコンパイル時に有効になっていれば<strong>bzip2</strong>もサポートする。
+このキーワードで圧縮の方式と圧縮レベルを指定する。
+この値の形式は <em>type:level</em> である。<em>type</em> は 
+&quot;<code>zlib</code>&quot; と &quot;<code>bzip2</code>&quot;のどちらか、<em>level</em> は0から9の整数である。
+プレフィックスなしで整数だけの場合は、<strong>zlib</strong>が選択される。</p>
+<p><em>level</em> は使用可能な最大の圧縮レベルを設定する
+(9が最大で0が圧縮なし)。
+実際に使用される圧縮レベルは、クライアントの値とサーバの値の最小値である。
+この目的では、(0以外の)<strong>bzip2</strong>レベルはいかなる<strong>zlib</strong>レベルの値より上であるとみなされる。
+従って、サーバとクライアントのいずれかが<strong>bzip2</strong>レベルをサポートしていなければ、
+プロトコルは<strong>zlib</strong>を選択する。
+デフォルトの圧縮レベルは&quot;<code>zlib:6</code>&quot;である。</p>
+<p><strong>bzip2</strong>圧縮の動作方式とバッファーサイズのために、
+<strong>bzip2</strong>は連続的なデータのストリームが流れる場合にだけ使う意味がある。
+通常の<strong>telnet</strong>セッションのような、小さな転送では<strong>zlib</strong>の方が性能がよい。
+どちらがあなたにとってよく働くかは、実験してみないとわからないだろう。
+加えて、バッファーサイズが小さいので、<strong>bzip2</strong>の1より上からは得るものがない。
+<strong>Zebedee</strong>はこれより上の値はこの値に変更する。</p>
+<p>verbosity levelを2以上にすれば、
+接続が終了した時に基本的な統計値がプリントアウトされるので、
+どれだけ圧縮が有効だったか正確に知ることができる。
+例えば、</p>
+<pre>
+ zebedee(232/210):   read 166 bytes (265 expanded) in 3 messages
+ zebedee(232/210):   wrote 20969 bytes (30499 expanded) in 247 messages</pre>
+</dd>
+<dt><strong><a name="generator" class="item"><strong>generator</strong></a></strong></dt>
+
+<dd>
+<p>これは、Diffie-Hellmanキー交換の&quot;generator&quot;で、16進数の文字列で指定する。
+デフォルトは&quot;2&quot;である。
+なんのことかわからなければ、
+下手にいじらない方がいいだろう。</p>
+</dd>
+<dt><strong><a name="keygencommand" class="item"><strong>keygencommand</strong></a></strong></dt>
+
+<dd>
+<p>このキーワードが指定されると、
+この値(コマンド文字列)が秘密鍵を生成するために使用される。
+そのコマンドは標準出力に1行の16進数を出力しなくてはならない。
+この行は少くとも10桁の16進数であること。</p>
+</dd>
+<dt><strong><a name="keygenlevel" class="item"><strong>keygenlevel</strong></a></strong></dt>
+
+<dd>
+<p>これは0と2の間の整数で、<strong>Zebedee</strong>で使用する秘密鍵生成の強度を決定する。
+デフォルトは2(最強)である。接続時のパフォーマンスが耐えがたい場合以外には、
+一般的にはこれを変更しないほうがよい。</p>
+<p>簡単に言って、UNXI系のシステムではレベル2のキー生成のメカニズムは、
+可能であれば <code>/dev/random</code> を使用する。
+しかしながら、あまりにも多くの要求を連続的にこのデバイスに対して行うと、
+カーネルが必要な&quot;エントロピー&quot;をかき集める間、
+プロセスがブロックされる可能性がある(それが数秒になることもある)。
+<code>/dev/random</code>が使用できない場合や
+レベルが1にセットされた場合は、
+<code>/proc</code>ファイルシステムの現在の内容が(もしあれば)使用される。
+レベル0では現在のプロセスにある情報だけが使用される。</p>
+<p>Windows上のシステムでは、現在のところ、
+キー生成強度のレベルごとの違いはなく、
+このキーワードは実際には無視される。</p>
+</dd>
+<dt><strong><a name="keylength" class="item"><strong>keylength</strong> (コマンドラインでは <strong>-k</strong>)</a></strong></dt>
+
+<dd>
+<p>これは、Blowfish暗号化のキーのビット長の最大値の整数である。
+この値は4から576の間の4の倍数でなければならない。
+使用されるキー長はクライアントの値とサーバの値の最小値になる。
+(<strong><a href="#item_minkeylength">minkeylength</a></strong>参照)</p>
+<p>デフォルトは128である。
+特別なケースとして、この値が0に設定されると、
+キーのネゴシエーションと暗号化は無効にされる。</p>
+</dd>
+<dt><strong><a name="keylifetime" class="item"><strong>keylifetime</strong></a></strong></dt>
+
+<dd>
+<p>このパラメータの値が0以外に設定されると、これ以降の接続において、
+クライアントはセッションキーの導出のために、以前設定されたshared secret keyを
+再利用するように要求する。
+つまり<strong>Zebedee</strong>のクライアントとサーバは、
+最初の接続においてのみキー交換の対話を全て行なう。
+それ以降の接続では、キーの有効期限が切れるまでは、同じsecret keyが再利用され、
+このキーからsession keyが導出される。
+キーの有効期限が切れると、自動的に新しいキーの交換が行なわれる。</p>
+<p>そして、このキーワードが、shared secret keyが有効な期間を指定する。
+これは、既に接続された接続には影響しないで、新しい接続だけに影響する。</p>
+<p>このキーワードの値の単位は秒であり、65535(約18時間)以下でなければならない。
+デフォルトは3600秒(1時間)である。
+このキーワードの値を0に設定すると、キーの再利用は行なわれなくなり、
+接続の度に、完全なshared keyの交換手続きが行なわれる。
+つまり、クライアントもサーバも毎回秘密鍵を新しく生成するとみなす。
+ただし、この方法はパフォーマンスに多大な影響があるので、
+偏執狂的に高度な安全性を必要とする場合以外には勧められない。</p>
+</dd>
+<dt><strong><a name="minkeylength" class="item"><strong>minkeylength</strong></a></strong></dt>
+
+<dd>
+<p>これは、クライアントまたはサーバで許容される最小のキー長を指定する。
+クライアントがサーバのレベルより小さい値を要求すると、
+サーバはここで指定した最小値を返答する。
+サーバがクライアントの最小値より下のレベルを返答すると、
+クライアントは接続を終了する。</p>
+<p>デフォルトは0である。</p>
+</dd>
+<dt><strong><a name="modulus" class="item"><strong>modulus</strong></a></strong></dt>
+
+<dd>
+<p>このキーワードの値は、Diffie-Hellmanキー交換の剰余値を表す16進数の文字列である。
+これが何かわかる人で数学オタクの人以外はいじっちゃだめ。</p>
+<p>デフォルトの値は下記の1024ビットの素数である。</p>
+<pre>
+ f488fd584e49dbcd 20b49de49107366b 336c380d451d0f7c 88b31c7c5b2d8ef6
+ f3c923c043f0a55b 188d8ebb558cb85d 38d334fd7c175743 a31d186cde33212c
+ b52aff3ce1b12940 18118d7c84a70a72 d686c40319c80729 7aca950cd9969fab
+ d00a509b0246d308 3d66a45d419f9c7c bd894b221926baab a25ec355e92f78c7</pre>
+<p>これは Peter Gutman の <strong>CryptLib</strong> の中の <em class="file">testdh.h</em> というファイルから
+とられた。
+そこには、この値が &quot;generated by Colin Plumb for SKIP&quot;だとコメントがある。
+それから &quot;these values were chosen as representative
+well-known public values to allay fears of possible trapdoors in
+self-generated values.  The generation method and actual values can be
+checked against the SKIP standards document.&quot; だとさ。</p>
+</dd>
+<dt><strong><a name="privatekey" class="item"><strong>privatekey</strong></a></strong></dt>
+
+<dd>
+<p>デフォルトでは、<strong>Zebedee</strong>はセッションごとに新しい秘密鍵を生成する。
+しかし、もしあなたが毎回同じキーを使いたい場合は、
+16進数の文字列としてこれを指定すればいい。
+もし公開鍵暗号による認証(<a href="#identity_checking">identitychecking</a>)を使用したい場合は、
+必ずこれを設定しなくてはいけない。
+キーが少くとも10桁は必要なことに注意すること。</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="_________________miscellaneous_keywords_">様々なキーワード(Miscellaneous Keywords)</a></h3>
+<p>以下のキーワードはクライアントにもサーバにも等しく適用される。</p>
+<dl>
+<dt><strong><a name="checkidfile" class="item"><strong>checkidfile</strong></a></strong></dt>
+
+<dd>
+<p>これは、接続を許可する前にチェックするアイデンティティを複数記述したファイルの名称である。
+これについては<a href="#identity_checking">identity checking</a>で詳しく述べる。
+このファイルはひとつしか指定できない。もし複数出現したら、
+最後の値が使用される。</p>
+<p>もし、<strong><a href="#item_keylength">keylength</a></strong>が0であることに
+(クライアントとサーバが)同意した場合は、アイデンティティのチェックは行なわれない。</p>
+</dd>
+<dt><strong><a name="connecttimeout" class="item"><strong>connecttimeout</strong></a></strong></dt>
+
+<dd>
+<p><strong>Zebedee</strong>が「逆むきモード」(<strong><a href="#item_listenmode">listenmode</a></strong> 及び <strong><a href="#item_clienthost">clienthost</a></strong>参照)で使用されている時、
+接続が受けつけられるのを待つ時間はこのキーワードで制御される。
+値は秒単位で65535未満であること。
+既定値は300秒である。</p>
+</dd>
+<dt><strong><a name="debug" class="item"><strong>debug</strong> (コマンドラインでは <strong>-D</strong>)</a></strong></dt>
+
+<dd>
+<p>これは<strong>Zebedee</strong>が &quot;debug&quot; モードで動作するかを指定する真偽値である。
+&quot;debug&quot; モードではサーバは
+(<strong><a href="#item_multiuse">multiuse</a></strong>モードのクライアント)は
+一度に一つの接続しか受け付けない。
+そして、別プロセスや別スレッドを生成することなく &quot;inline&quot; で動作する。
+これはデバッガ上でプログラムを動かす時に便利である。
+デフォルトはfalseである。コマンドラインオプションの <strong>-D</strong> は
+これを <strong>true</strong> に設定するのと同じである。</p>
+<p>注：この設定は、UDPモードでは正しく動作しないので、試さないほうがいい。</p>
+</dd>
+<dt><strong><a name="detached" class="item"><strong>detached</strong> (コマンドラインでは <strong>-d</strong>)</a></strong></dt>
+
+<dd>
+<p>これはプロセスが制御端末から自分自身を切離してバックグラウントで
+(UNIX用語ではデーモンとして)動作するかどうか指定する真偽値である。
+これはクライアントでもサーバでも有効であり、
+デフォルトは <strong>true</strong> である。コマンドラインオプションの<strong>-d</strong>は
+これを <strong>false</strong> に設定するのと同じである。</p>
+<p>注：Windowsのコマンドプロンプトではこれがうまく動作しないこともあるようだ。
+その徴候は、コンソールウインドウへの出力が止まり割込みのsignalが無視されるが、
+コンソールのプロンプトが<strong>Zebedee</strong>が終了するまで表示されないことだ。
+これを回避するには、以下のように &quot;start&quot; コマンドを使用すればよい。</p>
+<pre>
+ DOS&gt; start zebedee -f server.zbd</pre>
+<p>これは<strong>Zebedee</strong>を新しいコンソールセッションで起動し、そこから切り離す。
+切り離す前に一瞬だけチラリとそのコンソールが見えるが、それが消えても
+<strong>Zebedee</strong>はバックグラウンドで動作している。</p>
+</dd>
+<dt><strong><a name="include" class="item"><strong>include</strong></a></strong></dt>
+
+<dd>
+<p>これは別の設定ファイルの名前を指定する。
+そのファイルはこのファイルの残りを処理する前、
+この時点で処理される。
+例えば、秘密鍵をもっときっちりガードしたファイルに分離して保存した場合に、
+そのファイルを取り込むために使用される。
+includeは5レベルの深さまでに限定される(最初のファイルをレベル1として)。
+これはうっかり無限ループを作らないためである。</p>
+</dd>
+<dt><strong><a name="maxbufsize" class="item"><strong>maxbufsize</strong></a></strong></dt>
+
+<dd>
+<p>これは、
+<strong>Zebedee</strong> がアプリケーションからデータを読むために使用するバッファの長さ(バイト単位)を指定する。
+実際に使用されるバッファの長さはサーバの値とクライアントの値の最小値になる。</p>
+<p>デフォルトでは、<strong>Zebedee</strong>はトンネルの両端で
+サーバプログラム、クライアントプログラムから8192バイト単位で読み出す。
+例えば、すごく対話的なアプリケーションがあって、
+大きなデータ転送を待つためにひどいレスポンスだったりした時など、
+これを小さくしたいこともあるだろう。
+バッファサイズは1バイトまで縮めることができるが、
+おかしな動きをデバッグしようとしているのか時間を無駄にしたいのでなければ、
+これはお勧めできない。
+逆に、大量のデータの転送があって、
+圧縮をめいっぱい効かせたい場合は、16383バイトまで大きくしてもよい。
+注：<strong>maxbufsize</strong> は <strong>Zebedee</strong> が使用するメモリ量には関係ない。
+一度に読みこむデータのかたまりのサイズだけに影響する。</p>
+<p>UDPモードでは、バッファサイズは扱えるデータグラムの最大長にも影響する。
+現在のバッファサイズより大きなデータグラムは分断され、
+それを受信するアプリケーションが落ちることになりがちだ。
+16383バイト以上のデータグラムは扱うことができない。</p>
+</dd>
+<dt><strong><a name="message" class="item"><strong>message</strong></a></strong></dt>
+
+<dd>
+<p>verbosity level が1ならば、設定ファイルのこの部分を処理した時に、
+このメッセージがログに記録される。</p>
+</dd>
+<dt><strong><a name="name" class="item"><strong>name</strong> (コマンドラインでは <strong>-n</strong>)</a></strong></dt>
+
+<dd>
+<p>これは、実行ファイルのファイル名の代わりに、
+メッセージの中で使われるプログラム名称になる。
+Windows環境では、インストールあるいは削除されるサービスの名前としても用いられる。</p>
+</dd>
+<dt><strong><a name="logfile" class="item"><strong>logfile</strong> (command-line <strong>-o</strong>)</a></strong></dt>
+
+<dd>
+<p>これはメッセージが出力されるファイルの名前である。
+もし省略されるとメッセージは標準エラーに出力される。</p>
+<p>2つの特殊なファイル名も正しい名前として認識される。
+もし、名称が<strong>NULL</strong>だと、全てのメッセージ出力は止められる。
+<strong>SYSLOG</strong>だと、メッセージはホストのシステムログに出力される。
+Windowsシステムでは、アプリケーションイベントログを意味する。
+他のシステムでは、メッセージは<strong>syslog</strong> サービスに出力される。</p>
+</dd>
+<dt><strong><a name="serverport" class="item"><strong>serverport</strong></a></strong></dt>
+
+<dd>
+<p>これは、<strong>Zebedee</strong> サーバが接続を待ち受けるポートである。
+デフォルトはTCPモードでは11965 (0x2EBD)、UDPモードでは11230(0x2BDE)である。
+サーバでこれを指定すると、サーバはこのポートでlistenする。
+クライアントでこれを指定すると、クライアントは
+サーバのこの番号のポートに接続することになる。</p>
+<p>サーバ主導の接続(<strong><a href="#item_listenmode">listenmode</a></strong> 及び <strong><a href="#item_clienthost">clienthost</a></strong>参照)を使用する場合は、
+これはクライアントがサーバからの接続を待ち受けるポートのことも意味する。</p>
+</dd>
+<dt><strong><a name="timestamplog" class="item"><strong>timestamplog</strong> (コマンドラインでは <strong>-t</strong>)</a></strong></dt>
+
+<dd>
+<p>これは、ログメッセージにタイムスタンプを含めるかどうかを示す真偽値である。
+コマンドラインオプションの <strong>-t</strong> はこれを<strong>true</strong>に設定するのと同じである。</p>
+</dd>
+<dt><strong><a name="udpmode" class="item"><strong>udpmode</strong> (コマンドラインでは <strong>-u</strong>)</a></strong></dt>
+
+<dd>
+<p>デフォルトでは<strong>Zebedee</strong>は、コネクションベースのTCP/IPの通信を扱う。
+もし、このキーワードが指定されると、かわりにコネクションレスのUDP/IPの通信を扱う。</p>
+<p>この場合でも、<strong>Zebedee</strong>のクライアントとサーバ間のトンネルはTCP/IP接続を使用する。
+UDPの宛先ごとに別々の接続が使用される。
+UDPはコネクションレスなので、通信が完了したことを簡単に知ることはできない。
+この理由で、<strong>Zebedee</strong>の接続は一定の時間通信が無い場合にタイムアウトする必要がある。
+この時間は<strong><a href="#item_udptimeout">udptimeout</a></strong>の値で制御される。</p>
+<p>すでにタイムアウトしてしまったトンネルに向けたデータが到着した場合、
+接続を再確立する必要がある。
+このために、アプリケーションの特性によっては、
+UDPモードのパフォーマンスがよくないように見えることもある。
+<strong><a href="#item_keylifetime">keylifetime</a></strong>の値を変更して、
+接続のセットアップの時間を最小にすれば、パフォーマンスを向上させることができる。
+<strong><a href="#item_udptimeout">udptimeout</a></strong> の値を変更することも同様に役に立つ。</p>
+<p>コマンドラインオプションの<strong>-u</strong>は、この値を<strong>true</strong>に設定するのと同じである。</p>
+</dd>
+<dt><strong><a name="udptimeout" class="item"><strong>udptimeout</strong></a></strong></dt>
+
+<dd>
+<p>デフォルトでは、UDPモードのトンネルは、300秒通信が無いと閉じられる。
+このキーワードでその時間を変更できる(単位は秒)。
+この値は65535より大きくなってはいけない。
+これを0にすると一切通信が行なわれない(そういう設定もできるけど…)。</p>
+</dd>
+<dt><strong><a name="verbosity" class="item"><strong>verbosity</strong> (コマンドラインでは <strong>-v</strong>)</a></strong></dt>
+
+<dd>
+<p>これは、ログするメッセージのレベルを示す整数値である。
+0だとエラーメッセージだけ、
+5にするとメッセージトラフィックの非常に細かいディテールまで含める。
+デフォルトは1であり、通常はそれが最も使いやすい。</p>
+<p>メッセージは <em class="file">stderr</em> に出力される(コマンドラインオプションの<strong>-o</strong>か
+<strong><a href="#item_logfile">logfile</a></strong> キーワードでリダイレクトされない限り)
+一般的なメッセージはこんな感じである:</p>
+<pre>
+ zebedee(54/119):  Listening on local port 1172</pre>
+<p>カッコの中の数字はメッセージを出力したプロセスとスレッドのIDを表している。
+全てのエラーメッセージはレベル0でもログが取られ、
+以下の様に、先頭が <code>ERROR</code> という単語から始まる。</p>
+<pre>
+ zebedee(54/119): ERROR: failed to connect to localhost:11965</pre>
+<p>メッセージはログが取られたレベルに従ってインデントされる。</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="_____________________obsolete_keywords_">廃止されたキーワード(Obsolete Keywords)</a></h3>
+<p><strong>Zebedee</strong>の開発は長く続いているので、キーワードの一部もこれに対応して変化している。
+二、三のキーワードは他のものにとってかわられ廃止されている。
+古いコンフィギュレーションファイルに対する後方互換性を保つために、
+これらの廃止されたキーワードも認識されるが、
+新しいコンフィギュレーションファイルでは使うべきではない。</p>
+<dl>
+<dt><strong><a name="clientport" class="item"><strong>clientport</strong></a></strong></dt>
+
+<dd>
+<p>このキーワードはより一般的な<strong><a href="#item_tunnel">tunnel</a></strong>に置き換えられた。</p>
+<p>これは<strong>Zebedee</strong>クライアントが接続を待つポート(あるいはポートのリスト)である。
+これは「トンネル仕様」の最初の部分と等しい。</p>
+</dd>
+</dl>
+<dl>
+<dt><strong><a name="localport" class="item"><strong>localport</strong></a></strong></dt>
+
+<dd>
+<p>これはバージョン 2.0.0以前の<strong>Zebedee</strong>における、<strong><a href="#item_clientport">clientport</a></strong>の名前である。</p>
+</dd>
+<dt><strong><a name="redirecthost" class="item"><strong>redirecthost</strong></a></strong></dt>
+
+<dd>
+<p>これはバージョン 2.0.0以前の<strong>Zebedee</strong>における、<strong><a href="#item_targethost">targethost</a></strong>の名前である。</p>
+</dd>
+<dt><strong><a name="remoteport" class="item"><strong>remoteport</strong></a></strong></dt>
+
+<dd>
+<p>これはバージョン 2.0.0以前の<strong>Zebedee</strong>における、<strong><a href="#item_targetport">targetport</a></strong>の名前である。</p>
+</dd>
+<dt><strong><a name="targethost" class="item"><strong>targethost</strong></a></strong></dt>
+
+<dd>
+<p>このキーワードはより一般的な<strong><a href="#item_tunnel">tunnel</a></strong>に置き換えられた。</p>
+<p>このキーワードは、
+<strong>Zebedee</strong>サーバがローカルマシンのポートからトンネルするホストの名前を与える。</p>
+</dd>
+<dt><strong><a name="targetport" class="item"><strong>targetport</strong></a></strong></dt>
+
+<dd>
+<p>このキーワードはより一般的な<strong><a href="#item_tunnel">tunnel</a></strong>に置き換えられた。</p>
+<p>それは、クライアントが要求するポートかポートリスト
+(<strong>Zebedee</strong>サーバはターゲットホスト上のそのポートに接続する)を意味する。
+これは「トンネル仕様」の最後の部分と等しい。</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="___________________other_options_">その他のオプション(Other Options)</a></h3>
+<p>設定ファイルに対応するものを持たないコマンドオプション
+がいくつかあるので、それについてここで説明する。</p>
+<dl>
+<dt><strong><a name="p" class="item">-p</a></strong></dt>
+
+<dd>
+<p>このオプションで <strong>Zebedee</strong> は秘密鍵の値を標準出力に出力する。
+この出力は設定ファイルでそのまま使用できる形式である。
+例えば、</p>
+<pre>
+ privatekey &quot;c480bd48f707c69dec54c9e7b6e22dd04cac659e&quot;</pre>
+<p>の様な形である。</p>
+</dd>
+<dt><strong><a name="p" class="item">-P</a></strong></dt>
+
+<dd>
+<p>このオプションで <strong>Zebedee</strong> は<a href="#identity_checking">identity checking</a> で
+使用できるパブリックアイデンティティを生成する。結果は標準出力に書かれる。
+例えば、</p>
+<pre>
+ ef8153a0e392df005f67321ca2f0ace5bb8c5a1f myhostname</pre>
+<p>の様な形である。</p>
+<p>このオプションは秘密鍵を含む設定と共に指定するか、
+<strong>-p</strong> と共に用いて秘密鍵と公開鍵を両方同時に生成しなくてはいけない。</p>
+</dd>
+<dt><strong><a name="h" class="item">-h</a></strong></dt>
+
+<dd>
+<p>このオプションは以降の引数をファイル名とみなす。
+そして、それぞれのファイルは8192バイトのかたまりとして読みこまれ、
+SHAハッシュが計算される。
+引数がない場合や引数が&quot;<code>-</code>&quot;であった場合は標準入力のハッシュが計算される。
+例えば、</p>
+<pre>
+ $ zebedee -h /etc/passwd
+ bb1e734aeffd2111417761f5938dea3b53759598 /etc/passwd
+ $ zebedee -h &lt; /etc/passwd
+ bb1e734aeffd2111417761f5938dea3b53759598 -</pre>
+<p>の様な形である。</p>
+</dd>
+<dt><strong><a name="h" class="item">-H</a></strong></dt>
+
+<dd>
+<p>こちらは<strong>-h</strong>と似ているが、引数が文字列として扱われ、
+その文字列のSHAハッシュが計算され表示される。</p>
+<pre>
+ $ zebedee -H hello world
+ ac62a630ca850b4ea07eda664eaecf9480843152 hello
+ 86bf25ecb8a40b40b885c097c683b6e236fc8085 world</pre>
+</dd>
+<dt><strong><a name="s" class="item">-S (Windows only)</a></strong></dt>
+
+<dd>
+<p>Windowsシステムでは <strong>Zebedee</strong> を
+サービス(ブート時に自動的に起動され独立して動くプロセス)として
+インストールすることもできる。</p>
+<p><strong>Zebedee</strong>は<strong>install</strong>パラメータと設定ファイルの名前を指定することで
+サービスとしてインストールされる。例えば、</p>
+<pre>
+ zebedee -Sinstall=c:\zebedee\service.zbd</pre>
+<p>の様な形である。</p>
+<p>常に、設定ファイルのフルパスを指定しなければならない。
+このファイルはスタートアップ時に読みこまれ、
+サービスが動作するために必要なパラメータを全て含んでいなければならない。</p>
+<p>デフォルトでは、
+インストールされるサービスの名前はプログラムファイルの名前から取られる。
+従って通常は<strong>Zebedee</strong>になる。
+しかし、<strong>-n</strong>オプションを使用して変更することもできる。</p>
+<pre>
+ zebedee -n &quot;Zebedee Client Service&quot; -Sinstall=c:\zebedee\clientsvc.zbd</pre>
+<p>一旦、サービスがインストールされると、次のシステム再起動から自動的に起動される。
+もしくは(Windows NTの場合)サービスコントロールパネルで手動起動することもできる。</p>
+<p>サービスを削除するにはまずサービスを終了してから、<strong>-S</strong>オプションと 
+<strong>remove</strong> パラメータを使う。
+そして、もし必要ならば<strong>-n</strong>オプションでサービスの名称を指定する。
+例えば、</p>
+<pre>
+ zebedee -n &quot;Zebedee Client Service&quot; -Sremove</pre>
+<p>の様な形である。</p>
+<p><strong>-S</strong>のパラメータは他に <strong>run</strong> がある。これは内部で <strong>Zebedee</strong> の
+サービススタートアップコードを起動するために使うもので、
+ユーザが直接使用してはならない。</p>
+</dd>
+<dt><strong><a name="x" class="item">-x</a></strong></dt>
+
+<dd>
+<p>コマンドラインで指定できない設定ファイルのパラメータを
+指定するために、このオプションを使用することもできる。
+これに文字列の引数をつけると、
+それがあたかも設定ファイルの1行であるかのように処理される。
+コメントは認識されるが、&quot;\&quot;の継続行は使用できない。
+例えば、</p>
+<pre>
+ zebedee -x &quot; server true # It&#146;s a server!&quot;</pre>
+<p>というまわりくどいやりかたでも次のコマンド</p>
+<pre>
+ zebedee -s</pre>
+<p>と同じ効果を得ることができる。</p>
+</dd>
+</dl>
+<p>
+</p>
+<h3><a name="_____________________quick_reference_summary_">クイックリファレンス(Quick-Reference Summary)</a></h3>
+<p>以下の一覧表に、認識されるキーワード、引数、コマンドラインの同等オプション、
+指定できるのがクライアント(C)かサーバ(S)または両方(CS)、簡単な説明、
+を示す。</p>
+<pre>
+ checkidfile    filename       CS  相手側を認証する
+ clienthost     hostname  -c   S   サーバにクライアントホストに接続するよう指示する
+ command        string    -e   C   トンネル接続時に実行するコマンド
+ compression    level     -z   CS  要求する圧縮レベルの最大値
+ connecttimeout seconds        CS  接続を受けつけるまでの待ち時間
+ debug          boolean        CS  シングルスレッドのデバッグモードで実行する
+ detached       boolean   -d   CS  端末/コンソールから切離す
+ generator      string         CS  「Diffie-Hellman generator value」の16進数
+ include        filename  -f   CS  コンフィギュレーションファイルを読みこむ
+ keygencommand  string         CS  キーを生成するコマンド
+ keygenlevel    level          CS  生成するキーの強度(0から2)
+ keylength      bits           CS  要求するキーの流さの最大値(ビット単位)
+ keylifetime    seconds        CS  秘密鍵の寿命
+ listenmode     boolean   -l   C   クライアントにサーバの接続を待つよう指示する
+ localsource    boolean        C   ローカルマシンからの接続のみを受けつける
+ logfile        filename  -o   CS  ログファイルを設定
+ maxbufsize     bytes          CS  データ読み込み用のバッファーサイズを指定
+ message        string         CS  指定された文字列を出力する
+ minkeylength   bits           CS  受けつけるキー長の最小値
+ modulus        string         CS  「Diffie-Hellman modulus value」の16進数
+ multiuse       boolean   -m   C   複数の接続を扱う
+ name           string         CS  プログラム名を指定する
+ privatekey     string         CS  秘密鍵の16進数
+ redirect       ports     -r   S   サーバがリダイレクトするポート
+ server         boolean   -s   CS  サーバモードかクライアントモードか
+ serverhost     hostname       C   接続すべきサーバの名前
+ serverport     port      -T   CS  サーバが待ちうけるポート番号
+ target         spec           S   ターゲットとできるホストとポートを指定する
+ timestamplog   boolean   -t   CS  ログファイルにタイムスタンプを付加する
+ tunnel         spec           C   クライアントのポートと対応するターゲットを指定する
+ udpmode        boolean   -u   CS  UDPの通信を扱う
+ udptimeout     seconds        CS  UDPのトンネルにおける無通信の待ち時間
+ verbosity      level     -v   CS  メッセージのログレベルを設定する</pre>
+<p>以下のオプションにはキーワードに対応するものがない</p>
+<pre>
+ -p  秘密鍵を生成する
+ -P  パブリックアイデンティティを生成する
+ -h file
+    ファイルの内容をハッシュして結果を表示する
+ -Sinstall=file
+    指定されたコンフィギュレーションファイルとともにWindowsのサービスとしてインストールする
+ -Sremove
+    Windowsのサービスを削除する
+ -x string
+    オプション文字列を解釈する</pre>
+<p>
+</p>
+<h2><a name="identity_checking">Identity Checking</a></h2>
+<p><strong>Zebedee</strong> はデフォルトでは、2点間に暗号化チャネルを生成するに過ぎない。
+ご承知の通り、データは &quot;on the wire (通信線上)&quot; での盗聴からは守られるが、
+あなたが想定している相手に接続されているか否かは保証されない。
+これは、&quot;man-in-the-middle (第三者による横取り)&quot; アタックに対しては無防備である。
+もし、あなたがデータの圧縮と、盗聴から守ることを第一に心配しているなら、
+あなたはこの条件に満足するだろう。
+しかし、あなたの通信が第三者に横取りされていないことに対する保証を求めるなら、
+<strong>Zebedee</strong> はそれを行うための便宜を提供する。</p>
+<p>もし、同一の素数と原始根と秘密鍵が用いられるなら、それらは 
+Diffie-Hellman の鍵交換プロトコルのために、常に同じ公開鍵を生成するだろう。
+もし、あなたが(設定ファイルの<strong><a href="#item_privatekey">privatekey</a></strong>キーワードにて設定された)
+固定された秘密鍵を用いるなら、
+<strong>Zebedee</strong> は素数と原始根と秘密鍵の値の全てをハッシュして &quot;fingerprint (指紋)&quot; を生成することができる。
+これは、<strong>-P</strong> オプションにより行われる。 
+例えば、server.key ファイルが次の値</p>
+<pre>
+ privatekey &quot;1e34d6769502bae1087c18d2e8c8776e4a17ddaf&quot;</pre>
+<p>であるとき、</p>
+<p>次のコマンド</p>
+<pre>
+ $ zebedee -P -f server.key &gt; server.id</pre>
+<p>を実行すると、</p>
+<p>このような出力</p>
+<pre>
+ 135f04050961d37553731250d5c6f7495f088b32 myhostname</pre>
+<p>が得られる。</p>
+<p>この最初の16進数が &quot;fingerprint (指紋)&quot; である。 
+行中の他の文字列は、このアイデンティティの所有者を表すコメントである。
+デフォルトでは、これはアイデンティティが生成されたマシンのホスト名である。</p>
+<p>設定ファイルにおいて 
+<strong><a href="#item_checkidfile">checkidfile</a></strong> キーワードが設定された場合、その値は 
+&quot;fingerprint (指紋)&quot; 行を記述したファイルのファイル名である。 もし、接続
+先のアイデンティティがファイル中のいかなる値とも一致しない場合、
+接続は切断される。</p>
+<p>
+</p>
+<h2><a name="_______________________________notes_on_other_security_issues_">その他のセキュリティ関連の注記(Notes on Other Security Issues)</a></h2>
+<dl>
+<dt><strong><a name="message_integrity" class="item">Message Integrity</a></strong></dt>
+
+<dd>
+<p>プロトコルのオーバーヘッドを可能な限り小さくするために、
+<strong>Zebedee</strong> は伝送されたデータの正しさに対する確認は何も行っていない。
+そのため、アタッカーは途中でデータパケットを改変することができる。
+しかし、暗号の使用はデータを任意に変換することを極めて困難にしているのではないか
+(例えば、&quot;<code>ls -l</code>&quot;を&quot;<code>rm -f</code>&quot;に書き換えられるかい？) 。
+しかし、<strong>Zebedee</strong> はランダムなデータが送られたことによる影響から
+アプリケーションを守ることは行わない。</p>
+</dd>
+<dt><strong><a name="replay_and_insertion_attacks" class="item">Replay and Insertion Attacks</a></strong></dt>
+
+<dd>
+<p>多くのネットワークシステムにおいて有り得る攻撃の一つは
+データのキャプチャリングであり、良く知られた効果を及ぼす
+(例えば、管理者の <strong>telnet</strong> セッションにはある種の&quot;危険な&quot;操作が伴い、
+その操作を後に繰り返されたらどうなるか)。
+これを行うには、暗号化されたデータストリームを改変する必要は無いが、
+サーバに送られた同じネットワークパケットは、同じレスポンスを引き出すだろう。</p>
+<p><strong>Zebedee</strong> が &quot;anonymous&quot; モードで動作しているとき、
+セッション毎に異なる鍵が生成されるため、
+このようなアタックが成功する危険は非常に小さい。 
+しかし、<a href="#identity_checking">identity checking</a>の機能が使われているときには
+鍵は固定されているので、再生は実際に可能性がある。 
+<strong>Zebedee</strong>は、一つ一つの接続毎にユニークなセッションキーを生成することで、
+この問題に対処している。
+この方法では、接続のセットアップの最後に、チャレンジ-レスポンスの交換が行なわれ、
+相手側のシステムがshared secret keyを保持しており、
+以前に記録されたデータをオウム返ししているわけではないことが、
+確認される。</p>
+<p>加えて、<strong>Zebedee</strong> は Blowfish 暗号法を &quot;cipher feedback&quot; モードで用いており、
+データのあらゆる部分の複号は、
+それ以前の全てのデータパケットの複号が成功しているかどうかに依存する。 
+チャレンジ・レスポンスはデータストリームの &quot;salts&quot; を交換するので、
+トンネル化されたプロトコルに &quot;known plain-text&quot; アタック(辞書攻撃)を加えるのは
+より困難になる。</p>
+</dd>
+<dt><strong><a name="key_generation" class="item">Key Generation</a></strong></dt>
+
+<dd>
+<p>良くない鍵の使用は、最強の暗号化メカニズムをも汚すことができる。 
+鍵を生成するとき、<strong>Zebedee</strong> は可能な限り推測が困難なデータをかき集めて、
+それを SHA ハッシュアルゴリズムにより &quot;ステア (かき混ぜる)&quot; する。</p>
+<p>Windowsの場合、アタッカーが既にシステムにアクセスしていれば、
+取得可能なあらゆるデータは予測することができる。 
+しかし既に言及したように、
+ほとんどの用途においてこれは許容できるだろう。
+興味があるならば、プログラム中のコメントに詳細が説明されているので、
+参照されたい。</p>
+<p>もし、鍵の生成メカニズムに不満があるなら、
+設定ファイル中の<strong><a href="#item_keygencommand">keygencommand</a></strong> オプションを用いて、
+外部の鍵生成プログラムを呼べば良い。 
+組み込まれている性能を改善する提案は大歓迎だ!</p>
+</dd>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="_______________________troubleshooting_">トラブルシューティング(TROUBLESHOOTING)</a></h1>
+<p><strong>Zebedee</strong> は「箱から出してすぐそのまま」動くべきだが、あなたはトラブル
+にあうかもしれない。ほとんどのトラブルは接続の確立時に起こる
+(接続さえうまくいけば、データ転送はスムーズにいくことが多い)。
+(接続の)セットアップの手順に何が起こっているか簡単に見るには<strong>-v</strong>オプションを
+使えばよい。<strong>-d</strong> <strong>-D</strong> もいっしょに使って、<strong>Zebedee</strong>を端末から終了でき
+るようにして、一度に一つの接続しか処理しないようにしたほうがい
+いかもしれない。だから、こんな感じになるだろう。</p>
+<pre>
+ zebedee -dD -v 3 -s</pre>
+<p>ロギングレベルを3に設定することで、
+接続のセットアップの主なやりとりを見ることができる。
+問題がその後に起きてると確信が持てるならば、
+レベルを4か5にすれば、
+(接続時だけでなく)実際の通信で何がやりとりされているかも見ることができる。</p>
+<p>
+</p>
+<hr />
+<h1><a name="examples">EXAMPLES</a></h1>
+<p><strong>Zebedee</strong> のパッケージには、たくさんのサンプルの設定ファイルが含まれている。
+ここでは、それらの使用法と <strong>Zebedee</strong> を
+特定のいくつかのプロトコルで使用する具体的な方法を述べる。</p>
+<p>
+</p>
+<h2><a name="_______________example_server_configuration_">サーバ設定の例(Example Server Configuration)</a></h2>
+<p><strong>Zebedee</strong>のパッケージに含まれる <em class="file">server.zbd</em> という設定ファイルがある。
+これにはよく使われるほとんどのオプションの設定例がある。</p>
+<pre>
+ #
+ # Sample Zebedee server configuration file
+ #
+ # This shows the use of many, but not all, of the configuration file
+ # options available for use by a server.
+ #
+ 
+ verbosity 2            # Slightly more than basic messages
+ 
+ server true            # Yes, it&#146;s a server!
+ detached true          # Run detached from terminal
+ udpmode false          # Are we operating in UDP mode?
+ 
+ # Uncomment the following line to log messages to a file
+ #
+ #  logfile &#146;./server.log&#146;
+ #
+ # Or to log to the system logging facility uncomment this:
+ #
+ #  logfile SYSLOG
+ 
+ # Uncomment the following line if you want to use a fixed private
+ # key stored in a static file. The file should contain a line of
+ # the form &quot;privatekey hexadecimal-key-string&quot;
+ #
+ #  include &#146;./server.key&#146;
+ 
+ keygenlevel 2          # Generate maximum strength private keys
+ 
+ # To validate the identity of clients uncomment the following
+ # line:
+ #
+ #  checkidfile &#146;./clients.id&#146;
+ 
+ # Set up allowed redirection ports.
+ # These should be pretty safe -- but it&#146;s not a good idea
+ # to open up all ports.
+ 
+ redirect &quot;telnet ftp&quot;          # Basic services
+ redirect 5900-5999             # VNC traffic
+ redirect 6000-6010             # X Window System
+ redirect &quot;daytime chargen&quot;     # Ports useful for testing
+ 
+ targethost localhost           # Redirection is to the local machine
+ 
+ compression zlib:9             # Allow maximum zlib compression
+ keylength 256                  # Allow keys up to 256 bits
+ keylifetime 36000              # Shared keys last 10 hours
+ maxbufsize 16383               # Allow maximum possible buffer size</pre>
+<p>認証の機能をテストするためには、
+<strong><a href="#item_checkidfile">checkidfile</a></strong>の行をコメントアウトし、
+パッケージに含まれる<em class="file">client1.key</em>か<em class="file">client2.key</em>というファイルをクライアント側で使用すればよい。</p>
+<p>
+</p>
+<h2><a name="vnc_________use_with_vnc_">VNCの使用例(Use with VNC)</a></h2>
+<p><strong>Zebedee</strong>を作った理由の一つとして、ダイアルアップでVNCを使うということがある。
+VNCは「リモートフレームバッファコンセプト」を使い、
+リモートディスプレイを提供するフリーのシステムである。
+Windowsのデスクトップを離れた所に表示することもできるし、
+&quot;Xvnc&quot;サーバを使って X のデスクトップを
+VNCクライアントマシンから操作することもできるし、
+Javaを使えるブラウザーの中から操作することもできる。
+詳しくはhttp://www.uk.research.att.com/vnc/を参照のこと。</p>
+<p>提供されるサーバの設定例である<em class="file">server.zbd</em> は 5900-5999 ポートを
+リダイレクトしてVNCセッションをトンネリングする。
+このファイルはUNIXでもWindowsでも使用できるが、
+Windowsで使うためには、レジストリの&quot;AllowLoopback&quot;フラグを
+セットする必要があるので注意。
+以下の断片を(先頭のスペースを取り除いてから)ファイルに保存して 
+<strong>regedit</strong> に読ませれば、そのトリックを実行する。</p>
+<pre>
+ REGEDIT4
+ 
+ [HKEY_LOCAL_MACHINE\SOFTWARE\ORL\WinVNC3]
+ &quot;AllowLoopback&quot;=dword:00000001
+ 
+ [HKEY_LOCAL_MACHINE\SOFTWARE\ORL\WinVNC3\Default]
+ &quot;AllowLoopback&quot;=dword:00000001</pre>
+<p>この内容は <strong>Zebedee</strong> パッケージの中の <em class="file">vncloopback.reg</em> にも含まれている。
+このレジストリを設定すれば、コマンドラインで与えられたホストにトンネリングされたVNC ビューワを 
+<em class="file">vncviewer.zbd</em> で起動することができる。
+以下に <em class="file">vncviewer.zbd</em> の内容を示す。</p>
+<pre>
+ #
+ # Zebedee configuration file to start up a tunnelled VNC session
+ #
+ # Usage: zebedee -f vncviewer.zbd remote-host:vnc-port
+ #
+ 
+ verbosity 1         # Basic messages only
+ 
+ server false        # It&#146;s a client
+ detached true       # Detach from terminal
+ 
+ message &quot;Starting VNC viewer&quot;
+ 
+ # On Windows systems you might use the following:
+ 
+ command &#146;&quot;c:\Program Files\ORL\VNC\vncviewer.exe&quot; localhost:%d&#146;
+ 
+ # On UNIX systems you might use the following:
+ 
+ # command &#146;vncviewer localhost:%d&#146;
+ 
+ compression 6       # Request normal Zlib compression</pre>
+<p>以下のようにこのファイルを使用すると、</p>
+<pre>
+ zebedee -f vncviewer.zbd somehost:5901</pre>
+<p><em>somehost</em>の5901番ポートのVNCサーバにトンネルしたVNCビューワを起動する。
+(VNC風のいいかたで、&quot;<strong>somehost:1</strong>&quot;として参照されるサーバである)</p>
+<p>VNCはJavaのビューワもサポートしている。
+もしサーバがポート59xxで動作していたら、
+ビューワを58xxからダウンロードすることができる。
+しかしながら、
+どうもJavaビューワはクライアントへのメインのVNCポート番号で通信しているようだ。
+そのため、Javaビューワでこれをトンネルするには、
+ローカルとリモートで同じポート番号を使う必要がある。
+そのため、例えば、5901番のポートを使っているVNCサーバへのトラフィックを
+トンネルするには、次のようにする。</p>
+<pre>
+ zebedee 5801,5901:remotehost:5801,5901</pre>
+<p>もしローカルマシンでも5901番ポートを使ったVNCサーバが動いていると、
+これはうまくいかない。
+しかし、ポートが衝突しないように両者を調整することは可能である。</p>
+<p>もうひとつだけ言っておくことがある。
+VNCをデータ圧縮とともに使おうとしているなら、
+VNCのprotocol encodingに関して実験したほうがよい。
+私は、&quot;raw&quot; encoding が圧縮の効果が高く、
+遅い回線上ではよりよいパフォーマンスを示すことを発見した。
+しかし、あなたの場合は違う結果となるかもしれない。</p>
+<p>
+</p>
+<h2><a name="x_window_system_________use_with_the_x_window_system_">X Window Systemの使用例(Use with the X Window System)</a></h2>
+<p>X Window Systemは6000番以上のポートを使う。</p>
+<p><strong>xlocal</strong> というローカルマシンのポート6000でX サーバが動作しているとする。
+これは通常、<strong>xlocal:0</strong> というディスプレイで使われているポートである。
+そして、<strong>xremote</strong>という(リモート)マシンから、
+ローカルのディスプレイに安全な <strong>xterm</strong> のセッションを送り返したいものとする。
+これを行なうには、以下のコマンドを <strong>xlocal</strong> で実行する。</p>
+<pre>
+ zebedee -r 6000 -s</pre>
+<p>そして、<strong>xremote</strong> では</p>
+<pre>
+ zebedee 6001:xlocal:6000</pre>
+<p>を実行する。</p>
+<p>このことは、<strong>xremote</strong>上で、環境変数の<strong>DISPLAY</strong>が<code>localhost:1</code>に設定されていれば、
+Xのトラフィックは<strong>xlocal</strong>に到着することを意味する。
+そのため、例えば<strong>xterm</strong>を安全に<strong>xremote</strong>から送ろうとするなら、
+<strong>xremote</strong>上で次のコマンドを実行する必要がある。</p>
+<pre>
+ xterm -display localhost:1</pre>
+<p>これが正しく動作するためには、 
+<strong>xremote</strong>のXサーバのアクセスコントロールリストに<strong>localhost</strong>のエントリーを
+追加しなくてはならない。
+これを行うには次のコマンドを実行する。</p>
+<pre>
+ xhost +localhost</pre>
+<p>
+</p>
+<h2><a name="http___________________securing_http_traffic_">HTTPの通信を安全にする(Securing HTTP traffic)</a></h2>
+<p><strong>Zebedee</strong>クライアントを&quot;multi-use&quot;モードで動作させることで、
+全てのWebサーバへの通信を安全にすることができる。
+もし、Webサーバが <strong>webhost</strong> のポート80で動作しており、
+そのサーバマシンで <strong>Zebedee</strong> サーバも動作しているとしたら、
+次のコマンドがローカルマシンの8000番ポート経由のトンネルを設定する。</p>
+<pre>
+ zebedee 8000:webhost:80</pre>
+<p>will set up a tunnel via port 8000 on the client host. Now any URLs that
+previously were addressed via <strong>webhost</strong>, for example:</p>
+<pre>
+ <a href="http://webhost/private/index.html">http://webhost/private/index.html</a></pre>
+<p>は、この状態では次のURLで安全にアクセスできる。</p>
+<pre>
+ <a href="http://localhost:8000/private/index.html">http://localhost:8000/private/index.html</a></pre>
+<p>&quot;<code>localhost:8000</code>&quot;をあなたのプロキシーとして設定することで、
+全てのHTTPのトラフィックを安全なトンネル経由にすることもできる。
+しかし、注意すべきことは、HTTPのプロキシー設定以外にこの設定をしてはいけない。
+Secure HTTPを含む他のプロトコルは他の方法でリダイレクトする必要がある。
+ほとんどのブラウザは違うドメインに違うプロキシーを割りあてる設定も可能である。
+そのため、必要なものだけ選んでガードすることもできる。
+これを行なう方法についてはブラウザのマニュアルを参照されたし。</p>
+<p>
+</p>
+<h2><a name="ftp___________________securing_ftp_traffic_">FTPの通信を安全にする(Securing FTP traffic)</a></h2>
+<p>以下の手段で、
+<strong>Zebedee</strong>を使い多くのFTPサーバへのFTPコントロールコネクション
+(ユーザ名とパスワードが送られるコネクション)を守ることができる。
+さらに、<strong>Zebedee</strong>パッケージに含まれる <strong>ftpgw.tcl</strong> スクリプトによって、
+パッシブモードのデータコネクションさえも守ることができる。</p>
+<p>FTPサーバを扱う最も単純な方法は、以下のように <strong>Zebedee</strong> を起動することだ。</p>
+<pre>
+ zebedee -s -r ftp ftpserverhost</pre>
+<p>FTPサーバと同じマシンで <strong>Zebedee</strong> を動作させていても、コマンドラインで
+明示的にホスト名を指定する必要がある(または
+<strong><a href="#item_redirecthost">redirecthost</a></strong>キーワードを使用)。それを
+<strong>localhost</strong>として参照してはいけない。クライアントシステムでは
+<strong>Zebedee</strong>を次のように起動して、ポート10000番経由のマルチユーストンネル
+を構築する。</p>
+<pre>
+ zebedee 10000:ftpserverhost:ftp</pre>
+<p>FTPサーバに接続するには、次のようなコマンドを使用する。</p>
+<pre>
+ ftp clienthost 10000</pre>
+<p>くどいようだが、<strong>localhost</strong> でなくローカルクライアントのホスト名を使うこと。
+もし、windowsの標準FTPクライアントのように、
+あなたのFTPクライアントがコマンドラインでポートを指定できない時は、
+プログラムの中で(FTPセッションの中で) 
+&quot;<code>open clienthost 10000</code>&quot; というコマンドを使うことができる。
+もし、クライアントマシンでFTPサーバが立ち上がっていなければ、 
+<strong>Zebedee</strong> をこのように起動してもよい。</p>
+<pre>
+ zebedee <a href="ftp:ftpserverhost:ftp">ftp:ftpserverhost:ftp</a></pre>
+<p>これだとFTPクライアントプログラムは次のように起動できる。</p>
+<pre>
+ ftp clienthost</pre>
+<p>FTPのコントロールコネクションとデータコネクションが同じ所から来ているか
+どうかチェックするFTPサーバがあるが、そういうサーバに対しては上記の手法は
+うまくいかない。<strong>wu-ftpd</strong> のようなメジャーなFTPサーバはこの点に
+ついて厳しくチェックを入れる(セキュリティ面からは望ましいことだが…)。
+もし、サーバへの接続は明らかにうまくいくのに、
+ファイルのリストや読み出しで失敗したりハングアップするなら、
+そのサーバがここを厳しくチェックするタイプだった、ということだ。</p>
+<p>この問題を克服するのを助けるために、<strong>ftpgw.tcl</strong> というFTPゲートウェイの
+スクリプトが <strong>Zebedee</strong> パッケージには含まれている。
+このプログラムはフリーに入手可能であるTclスクリプティング言語
+(http://www.scriptics.com参照)で書かれていて、
+FTPのリクエストを中継して再送信し、サーバから<strong>Zebedee</strong> の存在を隠す。
+これは <strong>Zebedee</strong> サーバと同じマシンで走らせる必要がある。
+FTPサーバも同じマシンで動いているなら、単にこう起動すればよい。</p>
+<pre>
+ tclsh ftpgw.tcl</pre>
+<p>これでゲートウェイはポート2121で待ち受ける。明らかに、実際の使用ではこれ
+をバックグラウンドで起動したいだろう。それから、<strong>Zebedee</strong>サーバを</p>
+<pre>
+ zebedee -s -r 2121</pre>
+<p>として起動する。</p>
+<p>このケースではローカルホスト名を指定する必要はない
+(したければしてもかまわないが)。
+クライアント側ではこうする。</p>
+<pre>
+ zebedee 2121:ftpserverhost:2121</pre>
+<p>それからこうする。</p>
+<pre>
+ ftp clienthost 2121</pre>
+<p>こちらでは、この場合でもクライアントホスト名を使う。</p>
+<p>この設定では、FTPのコントロールコネクションはトンネルされるが、
+データコネクションには一切影響を与えない。
+もし、あなたのFTPクライアントがパッシブモードをサポートしていれば、 
+<strong>ftpgw.tcl</strong> でデータチャンネルも安全にすることができる。
+Netscape Navigator や Windows用のWS_FTPなどはそれをサポートしている。</p>
+<p>パッシブモードのデータコネクションを安全にするためには、
+まずデータコネクションに使うポート番号の範囲を選ばなくてはいけない。
+この例では。30000から30100番を使うものとする。
+まず、<strong>ftpgw.tcl</strong> を 起動する時に、このポート範囲を指定するために、
+<strong>-p</strong>オプションを使用する。</p>
+<pre>
+ tclsh ftpgw.tcl -p 30000-30100</pre>
+<p><strong>Zebedee</strong>サーバはこのように起動する。</p>
+<pre>
+ zebedee -s -r 2121,30000-30100</pre>
+<p>クライアントはこうだ。</p>
+<pre>
+ zebedee 2121,30000-30100:ftpserverhost:2121,30000-30100</pre>
+<p>Netscapeを使ってコントロールコネクションとデータコネクションを
+両方安全にアクセスするには、このようなURLを入力する。</p>
+<pre>
+ <a href="ftp://username@clienthost:2121/">ftp://username@clienthost:2121/</a></pre>
+<p>ここで<em>username</em>はFTPサーバでのユーザ名である。</p>
+<p>
+</p>
+<hr />
+<h1><a name="credits_and_legalities">CREDITS AND LEGALITIES</a></h1>
+<p>The following information can also be found in the file <em class="file">LICENCE.txt</em> in the
+<strong>Zebedee</strong> distribution.</p>
+<pre>
+ Copyright (c) 1999, 2000, 2001 by Neil Winton. All Rights Reserved.</pre>
+<pre>
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.</pre>
+<pre>
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.</pre>
+<pre>
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
+ USA.</pre>
+<p>A copy of the GNU General Public License can be found in the file <em class="file">GPL2.txt</em>.</p>
+<p>You may obtain the latest copy of <strong>Zebedee</strong>, including full source code from
+<a href="http://www.winton.org.uk/zebedee/">http://www.winton.org.uk/zebedee/</a> and other enquiries about <strong>Zebedee</strong>
+can be e-mailed to the author at <a href="mailto:zebedee@winton.org.uk">zebedee@winton.org.uk</a></p>
+<p><strong>Zebedee</strong> would not have been possible without the use of a large amount of
+freely-available software to do all the really hard stuff. I gratefully
+acknowledge the contributions made by the authors of the following software
+packages.</p>
+<p><strong>Zebedee</strong> uses the &quot;Blowfish&quot; encryption algorithm devised by Bruce Schneier.
+For more information on Blowfish see <a href="http://www.counterpane.com/blowfish.html">http://www.counterpane.com/blowfish.html</a> .
+The implementation used is by Eric Young and is covered by the following
+copyright:</p>
+<pre>
+ Copyright (C) 1995-1997 Eric Young (eay@mincom.oz.au)
+ All rights reserved.
+ 
+ This package is an Blowfish implementation written
+ by Eric Young (eay@mincom.oz.au).
+ 
+ This library is free for commercial and non-commercial use as long as
+ the following conditions are aheared to.  The following conditions
+ apply to all code found in this distribution.
+ 
+ Copyright remains Eric Young&#146;s, and as such any Copyright notices in
+ the code are not to be removed.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the copyright
+ notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ 3. All advertising materials mentioning features or use of this software
+ must display the following acknowledgement:
+ This product includes software developed by Eric Young (eay@mincom.oz.au)
+ 
+ THIS SOFTWARE IS PROVIDED BY ERIC YOUNG &#147;AS IS&#148; AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
+ 
+ The license and distribution terms for any publically available version or
+ derivative of this code cannot be changed.  i.e. this code cannot simply be
+ copied and put under another distrubution license
+ [including the GNU Public License.]
+ 
+ The reason behind this being stated in this direct manner is past
+ experience in code simply being copied and the attribution removed
+ from it and then being distributed as part of other packages. This
+ implementation was a non-trivial and unpaid effort.</pre>
+<p><strong>Zebedee</strong> uses the <strong>zlib</strong> compression library by Jean-loup Gailly and
+Mark Adler. It is covered by the following copyright notice:</p>
+<pre>
+ (C) 1995-1998 Jean-loup Gailly and Mark Adler</pre>
+<pre>
+ This software is provided &#146;as-is&#146;, without any express or implied
+ warranty.  In no event will the authors be held liable for any damages
+ arising from the use of this software.</pre>
+<pre>
+ Permission is granted to anyone to use this software for any purpose,
+ including commercial applications, and to alter it and redistribute it
+ freely, subject to the following restrictions:</pre>
+<pre>
+ 1. The origin of this software must not be misrepresented; you must not
+ claim that you wrote the original software. If you use this software
+ in a product, an acknowledgment in the product documentation would be
+ appreciated but is not required.
+ 2. Altered source versions must be plainly marked as such, and must not be
+ misrepresented as being the original software.
+ 3. This notice may not be removed or altered from any source distribution.</pre>
+<pre>
+ Jean-loup Gailly        Mark Adler
+ jloup@gzip.org          madler@alumni.caltech.edu</pre>
+<p><strong>Zebedee</strong> may use the <strong>bzip2</strong> compression library by Julian Seward which is
+covered by the following licence:</p>
+<pre>
+ This program, &quot;bzip2&quot; and associated library &quot;libbzip2&quot;, are
+ copyright (C) 1996-1999 Julian R Seward.  All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 
+ 1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+ 
+ 2. The origin of this software must not be misrepresented; you must 
+    not claim that you wrote the original software.  If you use this 
+    software in a product, an acknowledgment in the product 
+    documentation would be appreciated but is not required.
+ 
+ 3. Altered source versions must be plainly marked as such, and must
+    not be misrepresented as being the original software.
+ 
+ 4. The name of the author may not be used to endorse or promote 
+    products derived from this software without specific prior written 
+    permission.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE AUTHOR &#147;AS IS&#148; AND ANY EXPRESS
+ OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+ DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+ GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ Julian Seward, Cambridge, UK.
+ jseward@acm.org
+ bzip2/libbzip2 version 1.0 of 21 March 2000</pre>
+<p>By default <strong>Zebedee</strong> is built using an aribtrary precision integer arithmetic
+library derived from the sources to <code>mirrordir-0.10.49</code> which in turn derived
+this from the <strong>Python</strong> sources. The copyright is as follows:</p>
+<pre>
+
+ huge-number.c: arbitrary precision integer library from Python sources
+ This has nothing to do with cryptography.
+ Copyright (C) 1998 Paul Sheer</pre>
+<pre>
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.</pre>
+<pre>
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.</pre>
+<pre>
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</pre>
+<pre>
+
+ This file was taken from the Python source for `long&#146; type
+ integers. I have changed it to compile independently of the
+ Python source, and added the optimisation that GNU C can
+ use 31 bit digits instead of Python&#146;s 15 bit. You can download
+ the original from www.python.org. This file bears little
+ resemblance to the original though - paul</pre>
+<pre>
+
+ Copyright 1991-1995 by Stichting Mathematisch Centrum, Amsterdam,
+ The Netherlands.</pre>
+<pre>
+
+                         All Rights Reserved</pre>
+<pre>
+
+ Permission to use, copy, modify, and distribute this software and its
+ documentation for any purpose and without fee is hereby granted,
+ provided that the above copyright notice appear in all copies and that
+ both that copyright notice and this permission notice appear in
+ supporting documentation, and that the names of Stichting Mathematisch
+ Centrum or CWI or Corporation for National Research Initiatives or
+ CNRI not be used in advertising or publicity pertaining to
+ distribution of the software without specific, written prior
+ permission.</pre>
+<pre>
+
+ While CWI is the initial source for this software, a modified version
+ is made available by the Corporation for National Research Initiatives
+ (CNRI) at the Internet address <a href="ftp://ftp.python.org">ftp://ftp.python.org</a>.
+</pre>
+<pre>
+
+ STICHTING MATHEMATISCH CENTRUM AND CNRI DISCLAIM ALL WARRANTIES WITH
+ REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL STICHTING MATHEMATISCH
+ CENTRUM OR CNRI BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL
+ DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+ PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+ TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ PERFORMANCE OF THIS SOFTWARE.</pre>
+<p><strong>Zebedee</strong> uses the Secure Hash Algorith (SHA) the code for which was derived
+from Uwe Hollerbach&#146;s SHA module for <strong>perl</strong>. The code contains the following
+statement:</p>
+<pre>
+ NIST Secure Hash Algorithm
+ heavily modified by Uwe Hollerbach &lt;uh@alumni.caltech edu&gt;
+ from Peter C. Gutmann&#146;s implementation as found in
+ Applied Cryptography by Bruce Schneier
+
+</pre>
+<pre>
+ This code is in the public domain
+
+</pre>
+<p>Under Windows, <strong>Zebedee</strong> uses an implementation of the <em class="file">getopt</em> function
+covered by the following copyright:</p>
+<pre>
+ Copyright (c) 1987, 1993, 1994
+        The Regents of the University of California.  All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ 1. Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
+ 3. All advertising materials mentioning features or use of this software
+ must display the following acknowledgement:
+        This product includes software developed by the University of
+        California, Berkeley and its contributors.
+ 4. Neither the name of the University nor the names of its contributors
+ may be used to endorse or promote products derived from this software
+ without specific prior written permission.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS &#147;AS IS&#148; AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ SUCH DAMAGE.
+
+</pre>
+<p>
+</p>
+<h2><a name="thanks">Thanks</a></h2>
+<p>Special thanks go to those people who have taken the trouble to give me
+feedback and suggestions for improvement!</p>
+<pre>
+ $Id: zebedee.pod,v 1.1.1.1 2001/04/12 18:08:29 ndwinton Exp $
+</pre>
+
+</body>
+
+</html>
