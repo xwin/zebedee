@@ -253,7 +253,7 @@ svcMain(DWORD argc, LPTSTR *argv)
     /* Wait until SvcFinishEvent is set */
 
     wait = WaitForSingleObject(SvcFinishEvent, INFINITE);
-
+	(void)wait;
 finish:
     if (SvcFinishEvent != NULL)
     {
@@ -494,7 +494,7 @@ svcInstall9X(char *name, char *cmd)
 
     /* Add value for this service */
 
-    if (RegSetValueEx(runKey, name, 0, REG_SZ, cmd, strlen(cmd) + 1) != ERROR_SUCCESS)
+    if (RegSetValueEx(runKey, name, 0, REG_SZ, (unsigned char*)cmd, strlen(cmd) + 1) != ERROR_SUCCESS)
     {
 	RegCloseKey(runKey);
 	message(0, 0, "failed to add value to registry");
