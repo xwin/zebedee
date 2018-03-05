@@ -9,19 +9,27 @@ InfoBeforeFile=NOTICE.txt
 LicenseFile=LICENCE.txt
 
 [Files]
-Source: "zebedee.exe"; DestDir: "{app}"
-Source: "zebedee.ico"; DestDir: "{app}"
+Source: "zebedee.exe"; DestDir: "{app}"; Components: Main 
+Source: "zebedee.ico"; DestDir: "{app}"; Components: Main
 Source: "*.zbd"; DestDir: "{app}"
-Source: "*.key"; DestDir: "{app}"
+Source: "client1.key"; DestDir: "{app}"
+Source: "client2.key"; DestDir: "{app}"
 Source: "*.id"; DestDir: "{app}"
 Source: "vncloopback.reg"; DestDir: "{app}"
-Source: "*.html"; DestDir: "{app}"
-Source: "ftpgw.tcl"; DestDir: "{app}"
+Source: "zebedee.html"; DestDir: "{app}"; Components: Help
+Source: "zebedee.ja_JP.html"; DestDir: "{app}"; Components: Help/JP
+Source: "ftpgw.tcl"; DestDir: "{app}"; Components: TCL
 Source: "passphrase.tcl"; DestDir: "{app}"
-Source: "README.txt"; DestDir: "{app}"; Flags: isreadme
-Source: "LICENCE.txt"; DestDir: "{app}"
-Source: "GPL2.txt"; DestDir: "{app}"
-Source: "CHANGES.txt"; DestDir: "{app}"
+Source: "README.txt"; DestDir: "{app}"; Flags: isreadme; Components: Main
+Source: "LICENCE.txt"; DestDir: "{app}"; Components: Main
+Source: "GPL2.txt"; DestDir: "{app}"; Components: Main
+Source: "CHANGES.txt"; DestDir: "{app}"; Components: Main
+
+[Components]
+Name: "Main" ; Description: "Zebedee application"; Types: full compact custom; Flags: fixed
+Name: "Help" ; Description: "Documentation files"; Types: full custom;
+Name: "Help/JP" ; Description: "Documentation files - Japanese"; Types: custom;
+Name: "TCL" ; Description: "TCL Script Examples" ; Types: custom;
 
 [Icons]
 Name: "{group}\Run Zebedee Server"; Filename: "{app}\zebedee.exe"; Parameters: "-f server.zbd"; WorkingDir: "{app}"; IconFilename: "{app}\zebedee.ico"
