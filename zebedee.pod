@@ -188,13 +188,13 @@ remote target system, traffic on 9002 to the B<telnet> port and traffic on
 
 This combination of client listening ports, target host and destination
 ports is called a "tunnel specification". See the
-B<L<tunnel|/item_tunnel>> keyword for more details.
+B<L<tunnel|/tunnel>> keyword for more details.
 
 =head2 UDP Tunnelling
 
 Originally B<Zebedee> was designed only to be able to handle TCP/IP traffic.
 It can now also handle connectionless UDP data. To enable this start B<Zebedee>
-with the B<-U> option (or use the B<L<ipmode|/item_ipmode>> keyword). For
+with the B<-U> option (or use the B<L<ipmode|/ipmode>> keyword). For
 example:
 
  zebedee -s -U
@@ -213,9 +213,9 @@ this reason the performance in UDP mode may appear poor, depending on the
 nature of the application using it. You should note that there is also a limit
 on the size of UDP datagrams that can be handled.
 
-For further details see the B<L<maxbufsize|/item_maxbufsize>>,
-B<L<ipmode|/item_ipmode>>, B<L<udptimeout|/item_udptimeout>> and
-B<L<tcptimeout|/item_tcptimeout>> keywords.
+For further details see the B<L<maxbufsize|/maxbufsize>>,
+B<L<ipmode|/ipmode>>, B<L<udptimeout|/udptimeout>> and
+B<L<tcptimeout|/tcptimeout>> keywords.
 
 =head2 Some Terminology
 
@@ -257,7 +257,7 @@ A single B<Zebedee> client/server pair can handle tunnels for multiple
 targets, not just the system on which the B<Zebedee> server is running.
 
 When a server is started it can be given a list of valid targets either
-on the command-line or by using the B<L<target|/item_target>> keyword.
+on the command-line or by using the B<L<target|/target>> keyword.
 Each target is a host name optionally followed by a list of ports to
 which connections may be made. Consider the following command run on a
 machine called B<serverhost>:
@@ -301,12 +301,12 @@ client are the same then the traffic goes to the server's default target. To
 avoid confusion, if you want to include the server host in a list of multiple
 destinations then always name it last. Note that as well as a default target
 host it is also possible to specify a list of default allowed target ports
-where none are otherwise given. See the B<L<redirect|/item_redirect>> keyword
+where none are otherwise given. See the B<L<redirect|/redirect>> keyword
 for more details.
 
-As with the B<L<target|/item_target>> keyword for the server, the
+As with the B<L<target|/target>> keyword for the server, the
 equivalent of the command-line parameter for the client is the
-B<L<tunnel|/item_tunnel>> keyword (and B<L<serverhost|/item_serverhost>>
+B<L<tunnel|/tunnel>> keyword (and B<L<serverhost|/serverhost>>
 in order to specify the server host explictly).
 
 =head2 Server-Initiated Connections
@@ -316,7 +316,7 @@ connection has been made to it from a source system. Sometimes, for example
 when using B<Zebedee> through a restrictive firewall, it may be necessary for
 the server to initiate the connection back to the client --- to operate in
 "reverse." For details on how to do this see the
-B<L<clienthost|/item_clienthost>> and B<L<listenmode|/item_listenmode>>
+B<L<clienthost|/clienthost>> and B<L<listenmode|/listenmode>>
 keywords.
 
 =head2 Configuration File
@@ -374,11 +374,13 @@ A number of the keywords are either only applicable to clients or only
 applicable to servers. The same B<Zebedee> program runs as either client or
 server and will silently ignore inappropriate options for the current type of
 usage. The choice of client or server behaviour is controlled by the
-B<L<server|/item_server>> keyword:
+B<L<server|/server>> keyword:
 
 =over 4
 
-=item B<server> (command-line B<-s>)
+=item B<server> 
+
+(command-line B<-s>)
 
 This is a boolean indicating whether the program should run as a client or a
 server. The default is to run as a client if this keyword is not specified. The
@@ -397,12 +399,14 @@ The following keywords apply only to B<Zebedee> clients:
 
 =over 4
 
-=item B<command> (command-line B<-e>)
+=item B<command> 
+
+(command-line B<-e>)
 
 When running as a client, this is a command that will be spawned to run
 connected to the tunnel. If the value contains the character sequence "C<%d>"
 this will be replaced at run-time with the local port number (see the
-B<L<tunnel|/item_tunnel>> keyword). As this is done using B<sprintf>
+B<L<tunnel|/tunnel>> keyword). As this is done using B<sprintf>
 the conventions of that routine apply with regards to escaping "C<%>"
 characters (i.e. use "C<%%>" to generate a single "C<%>"). In addition,
 specifying more that one "C<%d>" or other format sequence will very likely
@@ -410,12 +414,14 @@ crash the program.
 
 Once the command closes its connection B<Zebedee> will exit. Using this
 keyword or option implicitly turns off multi-use mode (see
-B<L<multiuse|/item_multiuse>>). You can not use automatic command spawning
+B<L<multiuse|/multiuse>>). You can not use automatic command spawning
 when a single B<Zebedee> client is handling multiple connections in
-B<L<multiuse|/item_multiuse>> mode or when a list of ports has been specified
-with the B<L<tunnel|/item_tunnel>> keyword or on the command-line.
+B<L<multiuse|/multiuse>> mode or when a list of ports has been specified
+with the B<L<tunnel|/tunnel>> keyword or on the command-line.
 
-=item B<listenmode> (command-line B<-l>)
+=item B<listenmode> 
+
+(command-line B<-l>)
 
 In normal use a B<Zebedee> client inititates connections to the server when a
 connection has been made to it from a source system. Sometimes, for example
@@ -436,9 +442,9 @@ Server-initiated connections could, however, originate from arbitrary
 addresses, thus giving the client no control over the destination of the
 tunnel. To avoid this the client will validate that the address of the
 server's connection matches that specified, whether on the command-line, via
-the B<L<serverhost|/item_serverhost>> keyword or as part of the first tunnel
+the B<L<serverhost|/serverhost>> keyword or as part of the first tunnel
 specification. (The client can also use the
-B<L<checkaddress|/item_checkaddress>> keyword to perform such checking).
+B<L<checkaddress|/checkaddress>> keyword to perform such checking).
 
 When using B<listenmode> the server address can also contain a network mask.
 So the following client invocation:
@@ -447,17 +453,17 @@ So the following client invocation:
 
 will accept connections from any address on the 10.10.10.0 class C subnet.
 As a special case, if the server name is "C<*>" then connections will be
-accepted from any server address. Use of the L<identity checking|Identity
+accepted from any server address. Use of the L<identity checking|/Identity
 Checking> features is also recommended to ensure that the correct server
 connects.
 
 If a connection from a server is not received within a certain period then the
 connection back to the source system will be closed and the process abandoned.
 This timeout is controlled by the
-B<L<acceptconnecttimeout|/item_acceptconnecttimeout>> keyword. The default is
+B<L<acceptconnecttimeout|/acceptconnecttimeout>> keyword. The default is
 300 seconds.
 
-See the B<L<clienthost|/item_clienthost>> keyword for the description of the
+See the B<L<clienthost|/clienthost>> keyword for the description of the
 server side of this process.
 
 =item B<localsource>
@@ -469,10 +475,12 @@ the same as the "client" system.
 The default is for this value to be B<false> and for connections to be allowed
 from any arbitrary source machine.
 
-This has been superseded by the more generic B<L<listenip|/item_listenip>>
+This has been superseded by the more generic B<L<listenip|/listenip>>
 keyword. So "C<localsource true>" is equivalent to "C<listenip 127.0.0.1>".
 
-=item B<multiuse> (command-line B<-m>)
+=item B<multiuse> 
+
+(command-line B<-m>)
 
 If this value is B<true>, which is the default, then the B<Zebedee> client will
 handle multiple (potentially simultaneous) connection requests and will
@@ -485,7 +493,7 @@ is the default behaviour in the current version of B<Zebedee> and the option
 is retained only for backwards-compatibility reasons.
 
 Any client listening on multiple ports will automatically run in "multi-use"
-mode, even if this is set B<false> (see B<L<clientport|/item_clientport>>).
+mode, even if this is set B<false> (see B<L<clientport|/clientport>>).
 
 =item B<serverhost>
 
@@ -493,7 +501,7 @@ This is the name of the host on which a B<Zebedee> server is running and to
 which a tunnel is to be connected.  There is no default and a host name must
 be specified either in a configuration file or on the command line.
 
-See the B<L<listenmode|/item_listenmode>> keyword for the treatment of this
+See the B<L<listenmode|/listenmode>> keyword for the treatment of this
 value when using server-initiated connections.
 
 Prior to version 2.0.0 this was known as the B<remotehost> keyword. This
@@ -516,18 +524,18 @@ As a special case, if only a single tunnel specification is given with only a
 single target port then the client port list (and separating colon) may be
 omitted. The client port will be assigned automatically (and a message will be
 printed to the terminal giving the port number). This is to allow for
-backwards compatibility and for use with the B<L<command|/item_command>>
+backwards compatibility and for use with the B<L<command|/command>>
 keyword. If the target port is also omitted then it will default to B<telnet>
 (port 23).
 
 As described in the section L<Multiple Destinations> if the B<Zebedee> server
 host is not explicitly specified, either as the first argument on the
-command-line or via the B<L<serverhost|/item_serverhost>> keyword, then it
+command-line or via the B<L<serverhost|/serverhost>> keyword, then it
 will be taken from the first tunnel specification found.
 
 There is also one final variant of the tunnel specification. In this case the
 targethost is replaced by a "C<*>". This wild-card form is used either with
-the client running in "listen-mode" (see B<L<listenmode|/item_listenmode>> for
+the client running in "listen-mode" (see B<L<listenmode|/listenmode>> for
 further details) or when you want to specify tunnelling to the server's
 default target, whatever it may be. This latter form is useful in a
 configuration file when you want the file to be generically applicable to any
@@ -551,23 +559,25 @@ The following keywords apply only when running as a server:
 
 =over 4
 
-=item B<clienthost> (command-line B<-c>)
+=item B<clienthost> 
+
+(command-line B<-c>)
 
 If a B<clienthost> value is specified then the server will immediately attempt
 to connect to the specified host (on the port given by
-B<L<serverport|/item_serverport>>). Once a connection to the client has been
+B<L<serverport|/serverport>>). Once a connection to the client has been
 established the protocol exchanges proceed as normal. Each time a connection
 has been accepted by the client the server tentatively opens up another one so
 that the client could establish further tunnels if necessary.
 
 Three other keywords affect this behaviour. The
-B<L<serverconnecttimeout|/item_serverconnecttimeout>> keyword determines how
+B<L<serverconnecttimeout|/serverconnecttimeout>> keyword determines how
 long the server will spend trying to make a connection. If it cannot
 immediately connect to the client it will wait this many seconds before trying
 again. Once a connection has been established the server will wait up to
-B<L<acceptconnecttimeout|/item_acceptconnecttimeout>> seconds for the client
+B<L<acceptconnecttimeout|/acceptconnecttimeout>> seconds for the client
 to accept the connection and start the protocol exchange. Finally, this whole
-process will be repeated up to B<L<connectattempts|/item_connectattempts>>
+process will be repeated up to B<L<connectattempts|/connectattempts>>
 times. If a connection is not opened and accepted within this number of
 attempts the server will exit once all currently active tunnels have been closed.
 
@@ -575,10 +585,12 @@ Note that B<Zebedee> does not itself provide a mechanism for co-ordinating the
 starting of client and server to set up a "reverse" tunnel. That must be
 handled by some "out-of-band" mechanism.
 
-=item B<connectattempts> (command-line B<-C>)
+=item B<connectattempts> 
+
+(command-line B<-C>)
 
 This specifies the number of attempts the server makes to connect back to
-a client when a B<L<clienthost|/item_clienthost>> is given. The default is 1.
+a client when a B<L<clienthost|/clienthost>> is given. The default is 1.
 
 =item B<dropunknownprotocol>
 
@@ -589,12 +601,14 @@ meaning that the server will reply with the highest protocol version it
 supports, allowing the client to decide if it can continue. If set to true,
 the server will immediately terminate the connection.
 
-See also B<L<lockprotocol|/item_lockprotocol>>.
+See also B<L<lockprotocol|/lockprotocol>>.
 
-=item B<redirect> (command-line B<-r>)
+=item B<redirect> 
+
+(command-line B<-r>)
 
 This is the default list of the ports on the target system to which the server
-will accept requests to redirect data, when the B<L<target|/item_target>>
+will accept requests to redirect data, when the B<L<target|/target>>
 specification does not otherwise specify a port range. An example port list
 might be "C<telnet, ftp, 5900-5910>".
 
@@ -608,7 +622,7 @@ be accepted by default.
 The keyword (or B<-r> option) may be specified multiple times in which case
 redirection will be allowed to any of the ports specified.
 
-It is generally better to use the B<L<target|/item_target>> keyword instead of
+It is generally better to use the B<L<target|/target>> keyword instead of
 B<redirect>, where possible. The main reason to prefer B<redirect> is when you
 want to specify a common range of ports for a number of targets, for example:
 
@@ -629,7 +643,7 @@ host name followed by a colon and then a list of ports. For example
  target www.winton.org.uk:http,ftp
 
 If the port list (and colon) are omitted then requests for redirection will be
-controlled by the ports given by the B<L<redirect|/item_redirect>> statements,
+controlled by the ports given by the B<L<redirect|/redirect>> statements,
 if any.
 
 The target hostname may also be specified as a CIDR network address, that is
@@ -652,21 +666,21 @@ will be valid default address. If the default target has an address mask
 then B<Zebedee> will flag this as an error and exit.
 
 It is also possible to apply identity checking and source IP address
-validation, like that provided by B<L<checkidfile|/item_checkidfile>> and
-B<L<checkaddress|/item_checkaddress>>, to individual targets. If the target is
+validation, like that provided by B<L<checkidfile|/checkidfile>> and
+B<L<checkaddress|/checkaddress>>, to individual targets. If the target is
 suffixed with a "C<?>" followed by a file name, such as this:
 
  target 10.10.10.0/24:http?httpusers.ids
 
 then the file (C<httpusers.ids> in this example) must be a file in the same
-format as that described in the B<L<identity checking|Identity Checking>>
+format as that described in the B<L<identity checking|/Identity Checking>>
 section. The effect of this B<target> specification is to allow connections to
 be created to the HTTP port of any machine in the 10.10.10.0/24 sub-net, but
 only by clients whose identities are found in C<httpusers.ids>.
 
 Similarly, the target can be suffixed with "C<@>" followed by an address
 specification in the same form as that used by
-B<L<checkaddress|/item_checkaddress>>. For example:
+B<L<checkaddress|/checkaddress>>. For example:
 
  target 10.10.10.0/24:http@10.20.30.0/24
 
@@ -718,7 +732,9 @@ of data passing through the tunnel. They apply to both clients and servers:
 
 =over 4
 
-=item B<checksumlevel> (command-line B<-K>)
+=item B<checksumlevel> 
+
+(command-line B<-K>)
 
 B<Zebedee> will, by default, calculate a checksum for every message sent over
 the tunnel. This checksum is appended to the message and verified by the
@@ -736,7 +752,7 @@ B<Zebedee> version 2.5).
 
 The checksum level used will be the minimum of the client's and server's
 values (subject to any setting of
-B<L<minchecksumlevel|/item_minchecksumlevel>>).
+B<L<minchecksumlevel|/minchecksumlevel>>).
 
 The algorithms used and the overhead they imply are as follows:
 
@@ -766,7 +782,9 @@ assurance that the contents of the message have not been altered in transit.
 
 =back
 
-=item B<compression> (command-line B<-z>)
+=item B<compression> 
+
+(command-line B<-z>)
 
 B<Zebedee> can support both B<zlib> and, if enabled when it is built, B<bzip2>
 compression. This keyword specifies the type and level of compression to be
@@ -806,7 +824,7 @@ with this unless you know what you are doing.
 
 If this keyword is specified its value is a command string that will be
 executed in order to generate a private key (see
-B<L<privatekey|/item_privatekey>>. The command should write a single line of
+B<L<privatekey|/privatekey>>. The command should write a single line of
 hexadecimal digits to F<stdout>. This line must be a string of at least 10
 hexadecimal digits. A simple B<Tcl> (see L<http://tcl.activestate.com>) script
 (C<passphrase.tcl>) that prompts a user for a pass-phrase and then uses this
@@ -816,7 +834,7 @@ interpreter):
 
  keygencommand "/usr/bin/wish -f passphrase.tcl"
 
-If a B<L<privatekey|/item_privatekey>> value is specified it takes precedence
+If a B<L<privatekey|/privatekey>> value is specified it takes precedence
 over any B<keygencommand>.
 
 If the command string ends with a "C<+>" character then the command will be
@@ -850,12 +868,14 @@ otherwise at level 0 only data from the current process will be used.
 On Windows systems there is currently no distinction between different key
 generation strength levels and this keyword is effectively ignored.
 
-=item B<keylength> (command-line B<-k>)
+=item B<keylength> 
+
+(command-line B<-k>)
 
 This is an integer specifying the maximum key length (in bits) for the
 Blowfish encryption. It should be a multiple of 4 between 4 and 576.
 The key length used will be the minimum of the client's and server's
-values (subject to any setting of B<L<minkeylength|/item_minkeylength>>).
+values (subject to any setting of B<L<minkeylength|/minkeylength>>).
 
 The default value is 128. As a special case setting this value to 0 will turn
 off key negotiation and encryption.
@@ -886,7 +906,7 @@ paranoia level!
 =item B<minchecksumlevel>
 
 If supplied, this specifies the minimum acceptable checksum level (see
-B<L<checksumlevel|/item_checksumlevel>>) to be used by the client or server. If
+B<L<checksumlevel|/checksumlevel>>) to be used by the client or server. If
 a client requests a lower level of a server the server will reply with this
 minimum. If a server replies with a lower level to a client then the client
 will terminate the connection.
@@ -896,7 +916,7 @@ The default value is zero.
 =item B<minkeylength>
 
 If supplied, this specifies the minimum acceptable key length (see
-B<L<keylength|/item_keylength>>) to be used by client or server. If a client
+B<L<keylength|/keylength>>) to be used by client or server. If a client
 requests a lower level of a server the server will reply with this minimum. If
 a server replies with a lower level to a client then the client will terminate
 the connection.
@@ -929,7 +949,7 @@ By default B<Zebedee> will generate a new private key (the "exponent" value in
 the Diffie-Hellman key exchange calculation) each time one is required. If,
 however, you wish to use a fixed key then it can be specified as a string of
 hexadecimal digits.  You will definitely need to do this if you wish to use
-the L<identity checking|Identity Checking> feature. Note that the key must be
+the L<identity checking|/Identity Checking> feature. Note that the key must be
 at least 10 digits long.
 
 =item B<sharedkey>
@@ -952,9 +972,9 @@ responsibility to distribute and protect this secret from disclosure.
 
 =item B<sharedkeygencommand>
 
-This is the equivalent to the B<L<keygencommand|/item_keygencommand>> but in
-this case generates a B<L<sharedkey|/item_sharedkey>> value. Any
-B<L<sharedkey|/item_sharedkey>> value overrides this, if present.
+This is the equivalent to the B<L<keygencommand|/keygencommand>> but in
+this case generates a B<L<sharedkey|/sharedkey>> value. Any
+B<L<sharedkey|/sharedkey>> value overrides this, if present.
 
 =back
 
@@ -968,7 +988,7 @@ The following keywords apply equally to clients and servers:
 
 This keyword, which may be repeated multiple times, specifies an IP address
 and, optionally, range of ports in the same form as that used by the
-B<L<target|/item_target>> keyword. The IP address can be in the form of a CIDR
+B<L<target|/target>> keyword. The IP address can be in the form of a CIDR
 address.
 
 When a connection is established between a client and a server the IP address
@@ -982,7 +1002,7 @@ entry:
 
 in a server's configuration file would only permit connections from systems on
 the two subnets named. This checking is done before any further validation of
-identity (see L<identity checking|Identity Checking>).
+identity (see L<identity checking|/Identity Checking>).
 
 Please note that source IP addresses can easily be "spoofed" and you should
 not place great reliance on this for validating the identity of a client or
@@ -992,25 +1012,27 @@ server. It is, however, a useful basic protection mechanism.
 
 This names a file that contains a set of identities that will be checked
 before allowing a connection to be completed. This is described further in the
-description of L<identity checking|Identity Checking>. You may specify
+description of L<identity checking|/Identity Checking>. You may specify
 only one identity file. If this keyword appears multiple times only the
 last value will be used.
 
-If a B<L<keylength|/item_keylength>> of zero
+If a B<L<keylength|/keylength>> of zero
 has been agreed then no identity checking will be performed.
 
 =item B<acceptconnecttimeout>
 
 When B<Zebedee> is used in "reverse-mode" (see
-B<L<listenmode|/item_listenmode>> and B<L<clienthost|/item_clienthost>>)
+B<L<listenmode|/listenmode>> and B<L<clienthost|/clienthost>>)
 the timeout on waiting for connections to be accepted is controlled by
 this keyword. Its value is in seconds and may be no greater than 65535.
 The default is 300 seconds.
 
-=item B<debug> (command-line B<-D>)
+=item B<debug>
+
+(command-line B<-D>)
 
 This is a boolean indicating that B<Zebedee> should run in "debug" mode. In
-this case a server (or client running in B<L<multiuse|/item_multiuse>> mode)
+this case a server (or client running in B<L<multiuse|/multiuse>> mode)
 only accepts and handles a single connection at a time and does so "inline"
 without creating another process or thread. This is useful when running the
 program under the control of a debugger. It is false by default. The
@@ -1019,7 +1041,9 @@ command-line option B<-D> is equivalent to setting this to B<true>.
 Note that this setting will not work correctly in UDP mode, so don't bother
 trying it!
 
-=item B<detached> (command-line B<-d>)
+=item B<detached> 
+
+(command-line B<-d>)
 
 This is a boolean indicating whether the process should detach itself from the
 controlling terminal and run in the background (in UNIX terms, to run as a
@@ -1044,7 +1068,7 @@ This is a boolean value indicating whether logging output should include
 details of the data sent to and received from local sockets. Because this data
 is potentially sensitive --- one of the reasons for using B<Zebedee> in the
 first place --- the default is for such data not to be included (B<dumpdata>
-is false). If it is set to true then, when the B<L<verbosity|/item_verbosity>>
+is false). If it is set to true then, when the B<L<verbosity|/verbosity>>
 level is 5 or greater, the logging output will include lines such as the
 following:
 
@@ -1070,7 +1094,7 @@ server, for example:
 
 There is no default port, you must always specify one explicitly. The proxy
 can be used for either client or server-initiated connections (see
-B<L<listenmode|/item_listenmode>>). Source or target connections are
+B<L<listenmode|/listenmode>>). Source or target connections are
 unaffected, the proxy only applies to connections between a B<Zebedee> client
 and server.
 
@@ -1087,7 +1111,7 @@ does in the "official" version anyway.
 
 =item B<httpproxyauth>
 
-If tunnelling via an HTTP proxy, using B<L<httpproxy|/item_httpproxy>>, some
+If tunnelling via an HTTP proxy, using B<L<httpproxy|/httpproxy>>, some
 proxy servers require authentication information to be supplied in order to
 permit the connection to be made. B<Zebedee> supports the "basic"
 authentication type. The username and password required for this can be
@@ -1098,11 +1122,13 @@ are given in plain text, separated by a colon, as follows:
 
 =item B<idletimeout>
 
-This sets both the B<L<tcptimeout|/item_tcptimeout>> and
-B<L<udptimeout|/item_udptimeout>> to the same value, causing idle connections
+This sets both the B<L<tcptimeout|/tcptimeout>> and
+B<L<udptimeout|/udptimeout>> to the same value, causing idle connections
 to be closed. Please see those keywords for further details.
 
-=item B<include> (command-line B<-f>)
+=item B<include> 
+
+(command-line B<-f>)
 
 This specifies the name of another configuration file to read and parse at
 this point before continuing with the remainder of the file. It might be used,
@@ -1111,7 +1137,9 @@ protected file. There is a limit of 5 levels deep of include processing
 (counting the initial configuration file as level 1). This avoids
 unintentional recursion.
 
-=item B<ipmode> (command-line B<-U> for "both" mode)
+=item B<ipmode> 
+	
+(command-line B<-U> for "both" mode)
 
 As of version 2.4, a B<Zebedee> client or server can handle both TCP and UDP
 traffic simultaneously. This is controlled by the B<ipmode> keyword. It can
@@ -1119,7 +1147,7 @@ have a value of B<tcp>, B<udp> or B<both>.
 
 The default value is B<tcp> and B<Zebedee> will only handle TCP traffic in
 this case. The value B<udp> is equivalent to setting
-B<L<udpmode|/item_udpmode>> to be B<true>. In this case only UDP traffic will
+B<L<udpmode|/udpmode>> to be B<true>. In this case only UDP traffic will
 be handled and the B<Zebedee> server will, by default use a different port
 (11230). If it is set to B<both> then a client will listen for both TCP and
 UDP traffic and a server will handle requests to tunnel both TCP and UDP
@@ -1138,7 +1166,9 @@ then a client running in UDP-only mode will need to specify the server port:
 
  zebedee -u -T 11965 10000:serverhost:echo
 
-=item B<listenip> (command-line B<-b>)
+=item B<listenip> 
+
+(command-line B<-b>)
 
 Specifies the local IP address used to listen for connections. This can be
 useful on a system with multiple network interfaces, but where B<Zebedee>
@@ -1151,10 +1181,12 @@ unpredictable. The address must, obviously, also correspond to one of those
 belonging to the system.
 
 Note that B<listenip> is a more general form of
-B<L<localsource|/item_localsource>> and setting B<localsource> will override
+B<L<localsource|/localsource>> and setting B<localsource> will override
 B<listenip> and vice versa.
 
-=item B<lockprotocol> (command-line B<-L>)
+=item B<lockprotocol> 
+
+(command-line B<-L>)
 
 In normal usage, different versions of B<Zebedee> will try to negotiate
 a compatible version of the B<Zebedee> protocol between themselves. Provided
@@ -1207,13 +1239,17 @@ The default value is zero, which means that no limit is applied.
 The specifies a string that will be logged at verbosity level 1 when it is
 encountered in the configuration file.
 
-=item B<name> (command-line B<-n>)
+=item B<name> 
+
+(command-line B<-n>)
 
 This is the name of the program that is to be used in messages rather than the
 executable file name. Under Windows it is also the name of any service to be
 installed or removed.
 
-=item B<logfile> (command-line B<-o>)
+=item B<logfile> 
+
+(command-line B<-o>)
 
 This is the name of the file to which messages will be written. If it is not
 specified then messages are written to F<stderr>.
@@ -1240,16 +1276,18 @@ connections to fail.
 
 The timeout primarily affects the initial B<Zebedee> protocol exchanges. If
 you wish to cause valid but apparently idle connections to be timed out you
-should use B<L<tcptimeout|/item_tcptimeout>> or
-B<L<udptimeout|/item_udptimeout>>.
+should use B<L<tcptimeout|/tcptimeout>> or
+B<L<udptimeout|/udptimeout>>.
 
 This value may also be useful when a client is running in
-B<L<listenmode|/item_listenmode>>.  While B<Zebedee> tries to determine
+B<L<listenmode|/listenmode>>.  While B<Zebedee> tries to determine
 whether a connection from a server will be usable, and if it has already been
 closed, this is not always possible. In this case setting this to a non-zero
 value will stop the client hanging if it accepts such a "dead" connection.
 
-=item B<runasuser> (command-line B<-N>)
+=item B<runasuser> 
+
+(command-line B<-N>)
 
 This keyword and option apply to UNIX/Linux systems only.
 
@@ -1279,7 +1317,9 @@ C<root> program, even if this keyword is used. This keyword is only intended
 for use where B<Zebedee> is run by C<root>. Making B<Zebedee> a setuid C<root>
 program will open a gaping security hole in your system!
 
-=item B<serverport> (command-line B<-T>)
+=item B<serverport> 
+
+(command-line B<-T>)
 
 This is the port on which the B<Zebedee> server will listen for tunnel
 connections. The default is 11965 (0x2EBD) when running in TCP mode or mixed
@@ -1287,8 +1327,8 @@ TCP and UDP mode. It is 11230 (0x2BDE) in UDP-only mode. The keyword causes a
 server to listen on this port and a client to attempt to connect to this port
 on the server system.
 
-If using server-initiated connections (see B<L<listenmode|/item_listenmode>>
-and B<L<clienthost|/item_clienthost>>) then this is also the port on which the
+If using server-initiated connections (see B<L<listenmode|/listenmode>>
+and B<L<clienthost|/clienthost>>) then this is also the port on which the
 client listens for the server's incoming connections.
 
 =item B<serverconnecttimeout>
@@ -1307,8 +1347,8 @@ closed by either source or target. This keyword allows them to be closed
 after a certain period of inactivity. The value is in seconds and must be no
 greater than 65535. Setting it to zero results in an indefinite timeout.
 
-See also B<L<idletimeout|/item_idletimeout>> and
-B<L<udptimeout|/item_udptimeout>>.
+See also B<L<idletimeout|/idletimeout>> and
+B<L<udptimeout|/udptimeout>>.
 
 =item B<threadstacksize>
 
@@ -1321,13 +1361,17 @@ may be able to lower it without causing problems. Previous versions of
 B<Zebedee> have run successfully with a value of 32k. Under no circumstances
 can it be lowered below 16 (kilobytes).
 
-=item B<timestamplog> (command-line B<-t>)
+=item B<timestamplog> 
+
+(command-line B<-t>)
 
 This is a boolean value indicating whether log messages should contain a
 time-stamp. The default is not to do so. The command-line option B<-t> is
 equivalent to setting this to B<true>.
 
-=item B<udpmode> (command-line B<-u>)
+=item B<udpmode> 
+
+(command-line B<-u>)
 
 By default B<Zebedee> handles connection-oriented TCP/IP traffic. If this
 keyword is set true B<Zebedee> handles UDP/IP connectionless traffic instead.
@@ -1337,17 +1381,17 @@ connection. A separate connection is established for each different
 originating UDP network endpoint. Because UDP is connectionless there is no
 easy way to tell when the data traffic has been completed. For this reason the
 B<Zebedee> connection must be timed out after a period of inactivity. This
-period is controlled by the B<L<udptimeout|/item_udptimeout>> value.
+period is controlled by the B<L<udptimeout|/udptimeout>> value.
 
 If more data subsequently arrives from a source the tunnel for which has been
 timed out, the connection must be re-established.  For this reason the
 performance in UDP mode may appear poor, depending on the nature of the
-application using it. Altering the B<L<keylifetime|/item_keylifetime>> value
+application using it. Altering the B<L<keylifetime|/keylifetime>> value
 may improve this by minimizing connection setup times and changing the
-B<L<udptimeout|/item_udptimeout>> value may also help.
+B<L<udptimeout|/udptimeout>> value may also help.
 
 The command-line B<-u> option is equivalent to setting this to B<true>. It is
-also equivalent to setting B<L<ipmode|/item_ipmode>> to B<udp>.
+also equivalent to setting B<L<ipmode|/ipmode>> to B<udp>.
 
 =item B<udptimeout>
 
@@ -1358,17 +1402,19 @@ It must be no greater than 65535. Setting it to zero results in an indefinite
 timeout. This is probably not a good idea for UDP traffic as it means that
 there is no way ever to indicate that those connections should be closed.
 
-See also B<L<idletimeout|/item_idletimeout>> and
-B<L<tcptimeout|/item_tcptimeout>>.
+See also B<L<idletimeout|/idletimeout>> and
+B<L<tcptimeout|/tcptimeout>>.
 
-=item B<verbosity> (command-line B<-v>)
+=item B<verbosity> 
+
+(command-line B<-v>)
 
 This is an integer specifying the level of message logging with 0 being just
 error messages and 5 giving excruciating detail of the message
 traffic. The default (and generally most useful level) is 1.
 
 Messages are written to F<stderr> (unless redirected using the B<-o>
-command-line option or B<L<logfile|/item_logfile>> keyword). The general form
+command-line option or B<L<logfile|/logfile>> keyword). The general form
 of messages is something like:
 
  zebedee(54/119):  Listening on local port 1172
@@ -1395,36 +1441,36 @@ ones.
 
 =item B<clientport>
 
-This keyword has been superseded by the more general B<L<tunnel|/item_tunnel>>
+This keyword has been superseded by the more general B<L<tunnel|/tunnel>>
 keyword.
 
 This is the port or list of ports on which the B<Zebedee> client will listen
 for connections. It is equivalent to the first part of a
-B<L<tunnel|/item_tunnel>> specification.
+B<L<tunnel|/tunnel>> specification.
 
 =item B<connecttimeout>
 
 This has been replaced by the
-B<L<acceptconnecttimeout|/item_acceptconnecttimeout>> keyword.
+B<L<acceptconnecttimeout|/acceptconnecttimeout>> keyword.
 
 =item B<localport>
 
-This was the name of the B<L<clientport|/item_clientport>> keyword prior to
+This was the name of the B<L<clientport|/clientport>> keyword prior to
 version 2.0.0 of B<Zebedee>.
 
 =item B<redirecthost>
 
-This was the name of the B<L<targethost|/item_targethost>> keyword prior to
+This was the name of the B<L<targethost|/targethost>> keyword prior to
 version 2.0.0 of B<Zebedee>.
 
 =item B<remoteport>
 
-This was the name of the B<L<targetport|/item_targetport>> keyword prior to
+This was the name of the B<L<targetport|/targetport>> keyword prior to
 version 2.0.0 of B<Zebedee>.
 
 =item B<targethost>
 
-This keyword has been superseded by the more general B<L<target|/item_target>>
+This keyword has been superseded by the more general B<L<target|/target>>
 keyword.
 
 This keyword gives the name of a host to which a B<Zebedee> server will
@@ -1433,12 +1479,12 @@ machine.
 
 =item B<targetport>
 
-This keyword has been superseded by the more general B<L<tunnel|/item_tunnel>>
+This keyword has been superseded by the more general B<L<tunnel|/tunnel>>
 keyword.
 
 It gives the port or list of ports to which the client will request that
 B<Zebedee> server should establish connections on the target host. It is
-equivalent to the final part of a B<L<tunnel|/item_tunnel>> specification.
+equivalent to the final part of a B<L<tunnel|/tunnel>> specification.
 
 =back
 
@@ -1473,14 +1519,14 @@ with any other usage in the configuration file.
 
 This causes B<Zebedee> to generate a private key value and to write
 it to standard output in a form that can be used in a configuration
-file (see B<L<privatekey|/item_privatekey>>). For example:
+file (see B<L<privatekey|/privatekey>>). For example:
 
  privatekey "c480bd48f707c69dec54c9e7b6e22dd04cac659e"
 
 =item -P
 
 This causes B<Zebedee> to generate a public "identity" suitable for use by
-the L<identity checking|Identity Checking> feature. The result is written
+the L<identity checking|/Identity Checking> feature. The result is written
 to standard output. For example:
 
  ef8153a0e392df005f67321ca2f0ace5bb8c5a1f myhostname
@@ -1657,7 +1703,7 @@ then it will be potentially open to attack.
 The simplest, but most basic check, that you can make is to restrict the IP
 addresses from which a server will accept, or to which a client will make,
 connections. You can do this by using the
-B<L<checkaddress|/item_checkaddress>> keyword.
+B<L<checkaddress|/checkaddress>> keyword.
 
 IP address checking is useful but not that secure. B<Zebedee> is also open to
 open to "man-in-the-middle" attacks where an eavesdropper pretends to a client
@@ -1738,7 +1784,7 @@ private key.
 =head3 How does this work?
 
 By default, B<Zebedee> generates a new private key every time it is started.
-If the same B<L<modulus|/item_modulus>>, B<L<generator|/item_generator>> and
+If the same B<L<modulus|/modulus>>, B<L<generator|/generator>> and
 private key are used they will always generate the same public value for use
 in the Diffie-Hellman key exchange protocol. The "fingerprint" is a hash of
 the modulus, generator and public key. Only a person knowing the private key
@@ -1756,7 +1802,7 @@ merely for convenience and to keep the size of the identity file small.
 
 Starting with version 2.5, B<Zebedee> has the ability to perform data
 integrity validation on the transmitted data stream. This is controlled by the
-B<L<checksumlevel|/item_checksumlevel>> and
+B<L<checksumlevel|/checksumlevel>> and
 B<L<minchecksumlevel|/ietm_minchecksumlevel>> keywords. This integrity
 checking is on by default (although not set to the highest level).
 
@@ -1775,7 +1821,7 @@ same network packets sent to a server will elicit the same response.
 
 When B<Zebedee> is operating in "anonymous" mode the risk of such an attack
 being successful is low because different private keys will be generated every
-time B<Zebedee> is used. However, if the L<identity checking|Identity
+time B<Zebedee> is used. However, if the L<identity checking|/Identity
 Checking> features are used the keys will be fixed and replay could be a
 possibility.  B<Zebedee> protects against this by generating a unique session
 key for each connection.  Following that, the final part of the connection
@@ -1804,15 +1850,15 @@ detail if you are interested.
 
 If you are unhappy with the key generation mechanisms then you should call out
 to an external key generation program using the
-B<L<keygencommand|/item_keygencommand>> option in a configuration file.
+B<L<keygencommand|/keygencommand>> option in a configuration file.
 Suggestions for improving the built-in capabilities will also be gratefully
 received!
 
 =item Default Server Configuration
 
 By default, if you do not specify any target ports either in a
-B<L<target|/item_target>> specification or with a
-B<L<redirect|/item_redirect>> keyword a B<Zebedee> server will accept requests
+B<L<target|/target>> specification or with a
+B<L<redirect|/redirect>> keyword a B<Zebedee> server will accept requests
 to make connections to B<any> port. This is almost certainly not what you want
 in a production environment.
 
@@ -1822,7 +1868,7 @@ A "denial of service" attack is one where a malicious user does not attempt to
 capture secret information but instead tries to render a service unavailable
 or unusable. In common with many network service, B<Zebedee> is somewhat
 vulnerable to such attacks. If this is a particular concern to you then you
-may wish to employ the B<L<readtimeout|/item_readtimeout>> keyword in order to
+may wish to employ the B<L<readtimeout|/readtimeout>> keyword in order to
 reduce the susceptibility to this kind of attack.
 
 =back
@@ -1947,7 +1993,7 @@ B<Zebedee> distribution. This shows most of the common options.
  target localhost
 
 To test the identity checking facilities you can uncomment the
-B<L<checkidfile|/item_checkidfile>> line and then use one of the supplied
+B<L<checkidfile|/checkidfile>> line and then use one of the supplied
 F<client1.key> or F<client2.key> files on the client side.
 
 =head2 Use with VNC
@@ -2099,7 +2145,7 @@ works with some FTP servers, is to run the B<Zebedee> server as follows:
 
 Note that even if you are running B<Zebedee> on the same machine as the FTP
 server you should explictly name it on the command line (or using the
-B<L<target|/item_target>> keyword). Do not refer to it as B<localhost>. On the
+B<L<target|/target>> keyword). Do not refer to it as B<localhost>. On the
 client system you could then run B<Zebedee> as follows to set up a tunnel via
 port 10000:
 
@@ -2229,36 +2275,36 @@ now more than 3 years old) has been dropped. Compatibility is maintained for
 releases 2.0.0 and upward.
 
 New message integrity checking keywords
-(B<L<checksumlevel|/item_checksumlevel>> and
-B<L<minchecksumlevel|/item_minchecksumlevel>>) have been added. These give
+(B<L<checksumlevel|/checksumlevel>> and
+B<L<minchecksumlevel|/minchecksumlevel>>) have been added. These give
 assurance that messages have not been tampered with in transit. Also the
-keywords B<L<dropunknownprotocol|/item_dropunknownprotocol>> and
-B<L<lockprotocol|/item_dropunknownprotocol>> help enforce the use of these
+keywords B<L<dropunknownprotocol|/dropunknownprotocol>> and
+B<L<lockprotocol|/dropunknownprotocol>> help enforce the use of these
 features, if required. These are all derived from patches submitted by,
 Henrick Lund. Great work Henrick!
 
 Added the ability to hand the peer address, target address and target port to
 key generation commands (add a "C<+>" to the end of the command to get three
-extra arguments provided). See B<L<keygencommand|/item_keygencommand>> and
-B<L<sharedkeygencommand|/item_keygencommand>> for further details.
+extra arguments provided). See B<L<keygencommand|/keygencommand>> and
+B<L<sharedkeygencommand|/keygencommand>> for further details.
 
-Added B<L<httpproxyauth|/item_httpproxyauth>>" -- thanks to James CE Johnson.
+Added B<L<httpproxyauth|/httpproxyauth>>" -- thanks to James CE Johnson.
 
-Added B<runasuser|/item_runasuser>> (and the B<-N> option) -- thanks to Thomas
+Added B<runasuser|/runasuser>> (and the B<-N> option) -- thanks to Thomas
 Melzer.
 
-The B<L<target|/item_target>> specification has been extended to allow
+The B<L<target|/target>> specification has been extended to allow
 per-target client identity and address checking. The identity checking was
 originally submitted by Alain Turbide and address checking by Henrik Lund
 (again!)
 
-The B<L<acceptconnecttimeout|/item_acceptconnecttimeout>>
-B<L<connectattempts|/item_connectattempts>>,
-B<L<serverconnecttimeout|/item_serverconnecttimeout>>
-and B<L<targetconnecttimeout|/item_targetconnecttimeout>> keywords have been
+The B<L<acceptconnecttimeout|/acceptconnecttimeout>>
+B<L<connectattempts|/connectattempts>>,
+B<L<serverconnecttimeout|/serverconnecttimeout>>
+and B<L<targetconnecttimeout|/targetconnecttimeout>> keywords have been
 added to significantly improve the "reverse-mode" operation.
 
-Add B<L<maxconnections|item_maxconnections>> to alleviate potential
+Add B<L<maxconnections|/maxconnections>> to alleviate potential
 denial of service attacks.
 
 =head1 CREDITS AND LEGALITIES
