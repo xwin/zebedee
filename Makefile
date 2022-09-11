@@ -97,7 +97,7 @@ INSTALL = $(INSTALL_$(OS))
 
 # InnoSetup compiler for Win32 (see http://www.jordanr.dhs.org/)
 
-ISCOMP = "c:/Program Files/Inno Setup 4/compil32.exe"
+ISCOMP = "c:/Program Files (x86)/Inno Setup 6/compil32.exe"
 
 ###
 ### OS-specific definitions
@@ -188,8 +188,8 @@ SERVICEOBJ = $(SERVICEOBJ_$(OS))
 ####
 
 CFLAGS = $(OPTIM) $(DEFINES) -I. $(GMPINC) $(BFINC) $(ZINC) $(BZINC)
-
-LIBS = $(GMPLIB) $(BFLIB) $(ZLIB) $(BZLIB) $(OSLIBS)
+LDLIBS = $(OSLIBS)
+LIBS = $(GMPLIB) $(BFLIB) $(ZLIB) $(BZLIB)
 
 OBJS = zebedee.o sha_func.o huge.o $(GETOPTOBJ) $(SERVICEOBJ)
 
@@ -206,8 +206,8 @@ all : precheck zebedee$(EXE) zebedee.1 zebedee.html ftpgw.tcl.1 ftpgw.tcl.html z
 precheck :
 	@ if test -z "$(OS)"; then echo "Use '$(MAKE) OS=xxx' where xxx is win32, linux, linux64, solaris, freebsd, tru64, irix, hpux, macosx or bsdi"; exit 1; fi
 
-zebedee$(EXE) : $(OBJS)
-	$(CC) $(CFLAGS) -o zebedee$(EXE) $(OBJS) $(LIBS)
+zebedee$(EXE) : $(OBJS) $(LIBS)
+	$(CC) $(CFLAGS) -o zebedee$(EXE) $(OBJS) $(LDLIBS) $(LIBS)
 
 huge.o : huge.h
 
@@ -254,4 +254,13 @@ zbdsetup.exe : zebedee$(EXE) zebedee.html zebedee.ico vncloopback.reg \
 		$(ZBDFILES) $(TXTFILES)
 	$(PERL_win32) -ni.bak -e print $(ZBDFILES) $(TXTFILES) vncloopback.reg
 	$(ISCOMP) /cc zebedee.iss
-	mv -f Output/setup.exe zbdsetup.exe
+	mv -f Output/mysetup.exe Output/zbdsetup-$(ZBD_VERSION).exe
+
+$(BFLIB) :
+	make -C $(dir $@) CC=$(CC)
+
+$(ZLIB) :
+	make -C $(dir $@) -f win32/Makefile.gcc PREFIX=i686-w64-mingw32-
+
+$(BZLIB) :
+	make -C $(dir $@) CC=$(CC)
