@@ -3,7 +3,7 @@
 AppName=Zebedee Secure Tunnel
 AppVerName=Zebedee Secure Tunnel Version 2.5.4
 AppCopyright=Copyright 1999-2005 by Neil Winton.
-DefaultDirName={pf}\Zebedee
+DefaultDirName={commonpf}\Zebedee
 DefaultGroupName=Zebedee
 InfoBeforeFile=NOTICE.txt
 LicenseFile=LICENCE.txt

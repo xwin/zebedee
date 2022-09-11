@@ -3,7 +3,7 @@
 #
 # $Id: Makefile,v 1.25 2005/09/06 05:59:53 ndwinton Exp $
 
-ZBD_VERSION = 2.5.4
+ZBD_VERSION = 2.5.5
 
 OS = win32
 
@@ -51,14 +51,14 @@ BFLIB = ./blowfish-0.9.5a/libblowfish.a
 
 # Location of zlib include and library
 
-ZINC = -I./zlib-1.2.11
-ZLIB = ./zlib-1.2.11/libz.a
+ZINC = -I./zlib-1.2.12
+ZLIB = ./zlib-1.2.12/libz.a
 
 # Location of bzlib include and library
 # Set these empty if you don't want bzib2 support
 
-BZINC = -I./bzip2-1.0.6
-BZLIB = ./bzip2-1.0.6/libbz2.a
+BZINC = -I./bzip2-1.0.8
+BZLIB = ./bzip2-1.0.8/libbz2.a
 
 #
 # Tools needed for Perl "POD"-format documentation conversion.

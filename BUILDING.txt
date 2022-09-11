@@ -21,13 +21,13 @@ blowfish-0.9.5a:
     Builds without modification to the Makefile. Use "make optimize" to build
     the best version for your platform.
     
-zlib-1.2.11:
+zlib-1.2.12:
 
     Configure and build using:
 
 	./configure; make
 
-bzip2-1.0.3:
+bzip2-1.0.8:
 
     Follow the instructions in the README file
 
@@ -76,11 +76,11 @@ blowfish-0.9.5a:
     then run bf_opts.
 	set CC=	i686-w64-mingw32-gcc in the makefile
 	
-zlib-1.2.11:
+zlib-1.2.12:
 
 	run make -f win32/Makefile.gcc PREFIX=i686-w64-mingw32-
 
-bzip2-1.0.3:
+bzip2-1.0.8:
 
     Follow the instructions in the README file.
 	set CC=i686-w64-mingw32-gcc in Makefile
